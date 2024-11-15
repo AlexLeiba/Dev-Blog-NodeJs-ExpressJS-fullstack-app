@@ -1,0 +1,51 @@
+<div class="author">
+  <h1 class="author__heading">Hi</h1>
+  <p class="author__body">I'm a front-end developer</p>
+</div>
+
+<img
+  src="https://www.w3schools.com/w3css/img_lights.jpg"
+  alt="hero-image"
+  class="hero-image"
+/>
+
+<section class="articles">
+  <h2 class="articles__heading">Latest Articles</h2>
+
+  <ul class="article-ul">
+    <% blogsData?.forEach(post => { %>
+    <div>
+      <li>
+        <a href="/blog/<%= post._id %>">
+          <div>
+            <span><%= post.title %></span>
+            <p><%= post.body %></p>
+          </div>
+
+          <span class="article-list-date"
+            ><%= post.createdAt.toDateString() %></span
+          >
+        </a>
+        <div class="list-separator"></div>
+      </li>
+    </div>
+    <% }) %>
+  </ul>
+
+  <div class="pagination">
+    <!-- PREV -->
+
+    <% if(currentPage > 1 && prevPage !== null) { %>
+    <a href="/?page=<%= prevPage %>" class="pagination"> &lt; Previous posts</a>
+    <% }else{%>
+    <div></div>
+    <%} %>
+
+    <!-- NEXT -->
+    <% if(hasNextPage) { %>
+    <a href="/?page=<%= nextPage %>" class="pagination"> Next posts &gt;</a>
+    <% }else{%>
+    <div></div>
+    <%} %>
+  </div>
+</section>

@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* PARENT COMPONENTS */
+/* VARIABLES */
+:root {
+  --black: #1c1c1c;
+  --gray: #7e7e7e;
+  --gray-light: #e4e4e4;
+  --white: #fff;
+  --font-size-base: 1rem;
+  --font-size-sm: 0.8rem;
+  --font-size-md: 1.1rem;
+  --font-size-lg: 1.2rem;
+  --border-radius-base: 0.1rem;
+  --red: rgb(215, 38, 38);
+}
+
+/* BODY */
+body {
+  font-family: 'Faculty Glyphic', sans-serif;
+  color: var(--black);
+  background-color: var(--gray-light);
+  font-size: var(--font-size-base);
+  background-image: url('/img/img-noise-361x370.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  margin: 0;
+  box-sizing: border-box;
+
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem; /* PADDING ON RIGHT AND LEFT OF THE CONTAINER */
+  margin-top: 2rem;
+}
+
+/* MAIN */
+.main {
+  padding: 2rem 0;
+}
+
+/* FOOTER */
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* HEADER */
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: var(--white);
+  z-index: 999;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  text-decoration: none;
+}
+.header nav a {
+  text-decoration: none;
+}
+.header nav a:hover {
+  text-decoration: underline;
+}
+
+.header__logo {
+  font-weight: 700;
+}
+/* PARENT COMPONENTS */
+
+/* CHILD COMPONENTS */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+select,
+textarea {
+  font-family: 'Faculty Glyphic', sans-serif;
+  font-size: var(--font-size-base);
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius-base);
+  margin-bottom: 1rem;
+}
+
+.btn {
+  background-color: var(--black);
+  border: none;
+  color: var(--white);
+  padding: 1.6rem 3.2rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-delete {
+  background-color: var(--red);
+  border: none;
+  color: var(--white);
+  padding: 1rem 1.6rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+.hero-image {
+  max-height: 52.8rem;
+  filter: drop-shadow(0px 44px 34px rgba(0, 0, 0, 0.25));
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.author {
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.author__heading {
+  margin: 1rem 0 1rem 0;
+}
+
+.author__body {
+  font-size: var(--font-size-md);
+}
+
+.articles__heading {
+  margin-top: 4rem;
+}
+
+.article-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: clamp(1.13rem, cal(1.08rem + 0.22vw), 1.25rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.article-list-date {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+  width: 10rem;
+}
+
+.list-separator {
+  width: 100%;
+  height: 1px;
+  background-color: var(--gray-light);
+  margin-bottom: 2rem;
+}
+
+.article-ul li a {
+  display: flex;
+  justify-content: space-between;
+  text-decoration: none;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  visibility: hidden;
+  transform: translateY(-100px);
+  background-color: var(--black);
+  padding: 1rem;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  transition: transform 0.3s ease-in-out;
+}
+
+.open {
+  visibility: visible;
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.search-bar input {
+  margin: 0;
+  padding: 0;
+}
+
+.searchClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--gray-light);
+  padding: 1rem;
+  color: var(--white);
+}
+/* END SEARCH BAR */
+
+/* PAGINATION */
+.pagination {
+  text-decoration: none;
+  color: var(--gray);
+  font-size: var(--font-size-md);
+  display: flex;
+  justify-content: space-between;
+}
+
+.auth-form {
+  max-width: 500px;
+}
