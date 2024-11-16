@@ -14,6 +14,10 @@
   --red: rgb(215, 38, 38);
 }
 
+a {
+  text-decoration: none;
+}
+
 /* BODY */
 body {
   font-family: 'Faculty Glyphic', sans-serif;
@@ -224,4 +228,59 @@ img {
 
 .auth-form {
   max-width: 500px;
+}
+
+/* DASHBOARD */
+.dashboard-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-blogs li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 0.5rem;
+}
+
+.dashboard-author {
+  color: var(--gray);
+  font-size: var(--font-size-sm);
+}
+
+.created-date-time {
+  color: var(--gray);
+  font-size: 0.5rem;
+  text-decoration: none;
+}
+
+.dashboard-blogs li .edit-delete-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dashboard-blogs li .edit-delete-btns .edit a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgb(27, 189, 27);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-base);
+  color: var(--white);
+  font-size: var(--font-size-sm);
+}
+
+.dashboard-blogs li .edit-delete-btns .delete a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--red);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-base);
+  color: var(--white);
+  font-size: var(--font-size-sm);
 }

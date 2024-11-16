@@ -4,16 +4,36 @@ const router = express.Router(); // Routes
 const Post = require('../models.db/models');
 const loginLayout = '../views/layout/loginLayout';
 const registerLayout = '../views/layout/registerLayout';
+const dashboardLayout = '../views/layout/dashboardLayout';
 
 const AuthModel = require('../models.db/authModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// LOGIN AUTH MAIN PAGE GET
+// CHECK IF USER IS LOGGED IN
+// In order to make pages secure, we can pass this fn to all the requests we want to be hidden if user isn't logged in.
+const authMiddleware = async (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (token) {
+    try {
+      // CHECK IF THIS TOKEN IS USING THE SAME SECRET KEY THAT WE ARE USING
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+      next();
+    } catch (err) {
+      res.status(401).json({ message: 'You are not authorized' });
+    }
+  } else {
+    res.status(401).json({ message: 'You are not authorized' });
+  }
+};
+
+// LOGIN AUTH MAIN PAGE GET AND RENDER PAGE
 router.get('/login', async (req, res) => {
   const locals = {
-    title: 'Admin',
-    description: 'Admin',
+    title: 'Login',
+    description: 'Login',
   };
 
   try {
@@ -25,21 +45,10 @@ router.get('/login', async (req, res) => {
     console.log(err);
   }
 });
-// LOG IN POST
+// LOG IN POST AND RENDER PAGE
 router.post('/login', async (req, res) => {
-  const locals = {
-    title: 'Admin',
-    description: 'Admin',
-  };
-
   try {
-    res.render('auth/login', {
-      locals,
-      layout: loginLayout,
-    }); //when accesing this route we visit the 'admin' page from 'views' folder
-
     const { password, email } = req.body;
-    console.log('🚀 ~ router.post ~ email:', email);
 
     if (password && email) {
       const userDB = await AuthModel.findOne({ email });
@@ -58,28 +67,29 @@ router.post('/login', async (req, res) => {
           { expiresIn: '24h' }
         );
 
-        console.log('🚀 ~ router.post ~ token:\n\n\n\n', token);
+        // SENT TOKEN TO COOKIE
+        res.cookie('token', token, { httpOnly: true });
 
-        res.status(200).json({ token });
+        // REDIRECT TO DASHBOARD
+        res.redirect('/auth/dashboard');
       }
     } else {
-      res.status(400);
+      res
+        .status(400)
+        .json({ message: 'Please enter a valid email and password' });
     }
-
-    //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
   }
 });
 
-// REGISTER MAIN PAGE GET
+// REGISTER MAIN PAGE GET AND RENDER PAGE
 router.get('/register', async (req, res) => {
-  const locals = {
-    title: 'Admin',
-    description: 'Admin',
-  };
-
   try {
+    const locals = {
+      title: 'Admin',
+      description: 'Admin',
+    };
     res.render('auth/register', {
       locals,
       layout: registerLayout,
@@ -89,42 +99,84 @@ router.get('/register', async (req, res) => {
   }
 });
 
-// REGISTER POST
+// REGISTER POST AND RENDER PAGE
 router.post('/register', async (req, res) => {
-  const locals = {
-    title: 'Admin',
-    description: 'Admin',
-  };
-
   try {
     const { username, password, email } = req.body;
 
     if (username && password && email) {
-      const registered = await AuthModel.create({
-        username,
-        email,
-        password: bcrypt.hashSync(password, 10),
-      });
-      if (registered) {
-        res.redirect('/');
-        res.status(201).send('Registered successfully');
-      } else {
-        res.status(400).json({ message: 'User already exists' });
-      }
-    }
+      const findUser = await AuthModel.findOne({ email });
 
-    // RENDER PAGE
-    res.render('auth/register', {
+      if (findUser) {
+        res.status(400).json({ message: 'User already exists' });
+      } else {
+        const registered = await AuthModel.create({
+          username,
+          email,
+          password: bcrypt.hashSync(password, 10),
+        });
+        if (registered) {
+          res
+            .status(201)
+            .json({ message: 'Registered successfully' })
+            .redirect('/login');
+        } else {
+          res
+            .status(400)
+            .json({ message: 'Something went wrong please try again' });
+        }
+      }
+    } else {
+      res.status(400).json({ message: 'All fields are required' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// DASHBOARD ROUTE
+//protected page
+router.get('/dashboard', authMiddleware, async (req, res) => {
+  try {
+    const locals = {
+      title: 'Dashboard',
+      description: 'Dashboard',
+    };
+
+    // SORT BY DATE
+    const blogsData = await Post.find().sort({ createdAt: -1 });
+
+    res.render('auth/dashboard', {
       locals,
-      layout: registerLayout,
-    }); //when accesing this route we visit the 'admin' page from 'views' folder
+      layout: dashboardLayout,
+      data: blogsData,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+router.get('/blog/:id', authMiddleware, async (req, res) => {
+  try {
+    const blogData = await await Post.findById(req.params.id);
+
+    const locals = {
+      title: blogData.title,
+      description: blogData.description,
+    };
+
+    res.render('auth/blog', {
+      locals,
+      layout: dashboardLayout,
+      data: blogData,
+    });
   } catch (err) {
     console.log(err);
   }
 });
 
-// BLOG POST ROUTE, GET SELECTED POST
-router.get('/admin/blog/:id', async (req, res) => {
+// BLOG ROUTE, GET SELECTED BLOG
+router.get('/blog/:id', async (req, res) => {
   try {
     const selectedBlog = await Post.findById(req.params.id);
 
@@ -136,7 +188,112 @@ router.get('/admin/blog/:id', async (req, res) => {
     res.render('blog', {
       locals,
       post: selectedBlog,
+      layout: dashboardLayout,
     });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// ADD NEW BLOG RENDER PAGE
+router.get('/add-new-blog', authMiddleware, async (req, res) => {
+  try {
+    const locals = {
+      title: 'Add new blog',
+      description: 'Add new blog',
+    };
+
+    res.render('auth/add-new-blog', {
+      locals,
+      layout: dashboardLayout,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+// ADD NEW BLOG DATA
+router.post('/add-new-blog', authMiddleware, async (req, res) => {
+  try {
+    const { title, body, author } = req.body;
+
+    const selectedBlog = await Post.insertMany({
+      title,
+      body,
+      author,
+    });
+    if (selectedBlog) {
+      res.redirect('/auth/dashboard');
+      res.status(201).send('Blog added successfully');
+    }
+
+    const locals = {
+      title: 'Add new blog',
+      description: 'Add new blog',
+    };
+
+    res.render('auth/add-new-blog', {
+      locals,
+      layout: dashboardLayout,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+// DELETE A BLOG
+router.post('/delete-blog/:id', authMiddleware, async (req, res) => {
+  try {
+    const deletedBlog = await Post.findByIdAndDelete(req.params.id);
+    if (deletedBlog) {
+      res.redirect('/auth/dashboard');
+      res.status(200).send('Blog deleted successfully');
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+// EDIT A BLOG RENDER
+router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
+  try {
+    const editBlog = await Post.findById(req.params.id);
+    if (editBlog) {
+      const { title, body, author } = req.body;
+
+      const locals = {
+        title: editBlog.title,
+        description: editBlog.body,
+      };
+
+      res.render('auth/edit-blog', {
+        locals,
+        layout: dashboardLayout,
+        data: {
+          title: editBlog.title,
+          body: editBlog.body,
+          author: editBlog.author,
+          id: editBlog._id,
+        },
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+// EDIT A BLOG RENDER
+router.post('/edit-blog/:id', authMiddleware, async (req, res) => {
+  try {
+    const editBlog = await Post.findById(req.params.id);
+    if (editBlog) {
+      const { title, body, author } = req.body;
+
+      await Post.findByIdAndUpdate(req.params.id, {
+        title,
+        body,
+        author,
+      });
+
+      res.redirect('/auth/dashboard');
+      res.status(201).send('Blog updated successfully');
+    }
   } catch (err) {
     console.log(err);
   }

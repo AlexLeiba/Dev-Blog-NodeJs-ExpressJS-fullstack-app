@@ -6,14 +6,16 @@ const cookieParser = require('cookie-parser');
 const mongoStore = require('connect-mongo');
 const session = require('express-session');
 
+// Connect to the database mongoDB
+connectDB();
+
 const app = express();
 
 const PORT = process.env.PORT || 5002;
 
-// Connect to the database mongoDB
-connectDB();
+//used to pass data through body
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.urlencoded({ extended: true })); //used to pass data through body
 app.use(express.json()); // to parse JSON bodies into JSON format
 
 app.use(cookieParser());
@@ -30,16 +32,16 @@ app.use(
 // Templating engine/ MIDDLEWARE / LAYOUTS
 app.use(expressLayouts);
 
-// Set the layout for all the views
+// Set the layout for all the views, will automatically be used by all the routes, as its used in the middleware(before the pages are rendered)
 app.set('layout', './layout/layout');
 
-// Set the view engine "NODE" to work with JAVASCRIPT
+// EJS is the templating engine used in the views
 app.set('view engine', 'ejs');
 
 // Set the public folder as the static folder
 app.use(express.static('public'));
 
-//WHERE ALL THE ROUTES ARE
+//BLOGS ROUTES
 app.use('/', require('./server/routes/routes'));
 
 // AUTH ROUTES
