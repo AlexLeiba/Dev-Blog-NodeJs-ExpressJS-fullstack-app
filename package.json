@@ -1,5 +1,5 @@
 {
-  "name": "node-blogs",
+  "name": "blogs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,9 +10,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
@@ -26,5 +26,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
-  }
+  },
+  "description": ""
 }

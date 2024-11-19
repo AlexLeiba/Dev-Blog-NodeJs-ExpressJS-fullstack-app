@@ -1,28 +1,33 @@
-<h1>EDIT BLOG</h1>
-
 <form class="auth-form" action="/auth/edit-blog/<%= data.id %>" method="POST">
-  <label for="username">Title</label>
-  <input
-    type="text"
-    name="title"
-    id="title"
-    required
-    value="<%= data.title %>"
-  />
+  <div class="auth-form-container">
+    <h1>EDIT BLOG</h1>
+    <label for="username">Title</label>
+    <input
+      type="text"
+      name="title"
+      id="title"
+      required
+      value="<%= data.title %>"
+    />
 
-  <label for="body">Body</label>
-  <textarea name="body" id="body" value="<%= data.body %>" required>
-<%= data.body %></textarea
-  >
+    <label for="body">Body</label>
+    <textarea name="body" id="body" value="<%= data.body %>" required>
+      <%= data.body %></textarea
+    >
 
-  <label for="author">Author</label>
-  <input
-    type="text"
-    name="author"
-    id="author"
-    value="<%= data.author %>"
-    required
-  />
+    <label for="author">Author</label>
+    <input
+      type="text"
+      name="author"
+      id="author"
+      value="<%= data.author %>"
+      required
+    />
 
-  <button type="submit">Save</button>
+    <% if(error) { %>
+    <p class="error-message"><%= error %></p>
+    <% }%>
+
+    <button type="submit" class="saveBtn">Save</button>
+  </div>
 </form>

@@ -1,4 +1,7 @@
 <div class="dashboard-title">
+  <% if(error) { %>
+  <p class="error-message"><%= error %></p>
+  <% }%>
   <h2>Blog posts</h2>
 
   <a href="/auth/add-new-blog" class="addPostButton">+ Add New</a>
@@ -32,6 +35,7 @@
       </form>
     </div>
   </li>
+  <div class="list-separator"></div>
 
   <% }) %>
 </ul>

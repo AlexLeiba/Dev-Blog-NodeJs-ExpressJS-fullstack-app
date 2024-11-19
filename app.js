@@ -16,7 +16,8 @@ const PORT = process.env.PORT || 5002;
 //used to pass data through body
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.json()); // to parse JSON bodies into JSON format
+app.use(express.json());
+// to parse JSON bodies into JSON format
 
 app.use(cookieParser());
 app.use(

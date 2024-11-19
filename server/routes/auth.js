@@ -9,6 +9,7 @@ const dashboardLayout = '../views/layout/dashboardLayout';
 const AuthModel = require('../models.db/authModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const e = require('express');
 
 // CHECK IF USER IS LOGGED IN
 // In order to make pages secure, we can pass this fn to all the requests we want to be hidden if user isn't logged in.
@@ -22,10 +23,12 @@ const authMiddleware = async (req, res, next) => {
       req.user = decoded;
       next();
     } catch (err) {
-      res.status(401).json({ message: 'You are not authorized' });
+      res.status(401);
+      res.redirect('/auth/login');
     }
   } else {
-    res.status(401).json({ message: 'You are not authorized' });
+    res.status(401);
+    res.redirect('/auth/login');
   }
 };
 
@@ -40,13 +43,23 @@ router.get('/login', async (req, res) => {
     res.render('auth/login', {
       locals,
       layout: loginLayout,
+      error: '',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
+    res.render('auth/login', {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
 // LOG IN POST AND RENDER PAGE
 router.post('/login', async (req, res) => {
+  const locals = {
+    title: 'Login',
+    description: 'Login',
+  };
   try {
     const { password, email } = req.body;
 
@@ -71,15 +84,26 @@ router.post('/login', async (req, res) => {
         res.cookie('token', token, { httpOnly: true });
 
         // REDIRECT TO DASHBOARD
-        res.redirect('/auth/dashboard');
+
+        setTimeout(() => {
+          res.redirect('/auth/dashboard');
+        }, 1000);
+      } else {
+        throw new Error('Please enter a valid email and password');
       }
     } else {
       res
         .status(400)
         .json({ message: 'Please enter a valid email and password' });
+      throw new Error('Please enter a valid email and password');
     }
   } catch (err) {
     console.log(err);
+    res.render('auth/login', {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
 
@@ -93,6 +117,7 @@ router.get('/register', async (req, res) => {
     res.render('auth/register', {
       locals,
       layout: registerLayout,
+      error: '',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
@@ -101,6 +126,10 @@ router.get('/register', async (req, res) => {
 
 // REGISTER POST AND RENDER PAGE
 router.post('/register', async (req, res) => {
+  const locals = {
+    title: 'Admin',
+    description: 'Admin',
+  };
   try {
     const { username, password, email } = req.body;
 
@@ -108,7 +137,7 @@ router.post('/register', async (req, res) => {
       const findUser = await AuthModel.findOne({ email });
 
       if (findUser) {
-        res.status(400).json({ message: 'User already exists' });
+        throw new Error('User already exists');
       } else {
         const registered = await AuthModel.create({
           username,
@@ -128,70 +157,92 @@ router.post('/register', async (req, res) => {
       }
     } else {
       res.status(400).json({ message: 'All fields are required' });
+      throw new Error('All fields are required');
     }
   } catch (err) {
     console.log(err);
-    res.status(400).json({ message: err.message });
+    res.status(400);
+    res.render('auth/register', {
+      locals,
+      layout: registerLayout,
+      error: err.message,
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
 
 // DASHBOARD ROUTE
 //protected page
 router.get('/dashboard', authMiddleware, async (req, res) => {
+  const locals = {
+    title: 'Dashboard',
+    description: 'Dashboard',
+  };
+
+  // SORT BY DATE
+  const blogsData = await Post.find().sort({ createdAt: -1 });
   try {
-    const locals = {
-      title: 'Dashboard',
-      description: 'Dashboard',
-    };
-
-    // SORT BY DATE
-    const blogsData = await Post.find().sort({ createdAt: -1 });
-
+    if (blogsData) {
+      res.render('auth/dashboard', {
+        locals,
+        layout: dashboardLayout,
+        data: blogsData,
+        error: '',
+      });
+    }
+  } catch (err) {
+    console.log(err);
     res.render('auth/dashboard', {
       locals,
       layout: dashboardLayout,
-      data: blogsData,
+      data: blogsData ? blogsData : [],
+      error: err.message,
     });
-  } catch (err) {
-    console.log(err);
   }
 });
-router.get('/blog/:id', authMiddleware, async (req, res) => {
-  try {
-    const blogData = await await Post.findById(req.params.id);
+// router.get('/blog/:id', authMiddleware, async (req, res) => {
+//   try {
+//     const blogData = await Post.findById(req.params.id);
 
-    const locals = {
-      title: blogData.title,
-      description: blogData.description,
-    };
+//     const locals = {
+//       title: blogData.title,
+//       description: blogData.description,
+//     };
 
-    res.render('auth/blog', {
-      locals,
-      layout: dashboardLayout,
-      data: blogData,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-});
+//     res.render('auth/blog', {
+//       locals,
+//       layout: dashboardLayout,
+//       data: blogData,
+//     });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 // BLOG ROUTE, GET SELECTED BLOG
-router.get('/blog/:id', async (req, res) => {
+router.get('/blog/:id', authMiddleware, async (req, res) => {
+  const selectedBlog = await Post.findById(req.params.id);
   try {
-    const selectedBlog = await Post.findById(req.params.id);
+    if (selectedBlog) {
+      const locals = {
+        title: selectedBlog.title,
+        description: selectedBlog.description,
+      };
 
-    const locals = {
-      title: selectedBlog.title,
-      description: selectedBlog.description,
-    };
-
-    res.render('blog', {
-      locals,
-      post: selectedBlog,
-      layout: dashboardLayout,
-    });
+      res.render('blog', {
+        locals,
+        post: selectedBlog,
+        layout: dashboardLayout,
+        error: '',
+      });
+    }
   } catch (err) {
     console.log(err);
+    res.render('blog', {
+      locals,
+      post: selectedBlog ? selectedBlog : '',
+      layout: dashboardLayout,
+      error: err.message,
+    });
   }
 });
 
@@ -206,13 +257,23 @@ router.get('/add-new-blog', authMiddleware, async (req, res) => {
     res.render('auth/add-new-blog', {
       locals,
       layout: dashboardLayout,
+      error: '',
     });
   } catch (err) {
     console.log(err);
+    res.render('auth/add-new-blog', {
+      locals,
+      layout: dashboardLayout,
+      error: err.message,
+    });
   }
 });
 // ADD NEW BLOG DATA
 router.post('/add-new-blog', authMiddleware, async (req, res) => {
+  const locals = {
+    title: 'Add new blog',
+    description: 'Add new blog',
+  };
   try {
     const { title, body, author } = req.body;
 
@@ -223,20 +284,21 @@ router.post('/add-new-blog', authMiddleware, async (req, res) => {
     });
     if (selectedBlog) {
       res.redirect('/auth/dashboard');
-      res.status(201).send('Blog added successfully');
+      res.status(201).json({ message: 'Blog added successfully' });
     }
-
-    const locals = {
-      title: 'Add new blog',
-      description: 'Add new blog',
-    };
 
     res.render('auth/add-new-blog', {
       locals,
       layout: dashboardLayout,
+      error: '',
     });
   } catch (err) {
     console.log(err);
+    res.render('auth/add-new-blog', {
+      locals,
+      layout: dashboardLayout,
+      error: err.message,
+    });
   }
 });
 // DELETE A BLOG
@@ -248,21 +310,20 @@ router.post('/delete-blog/:id', authMiddleware, async (req, res) => {
       res.status(200).send('Blog deleted successfully');
     }
   } catch (err) {
-    console.log(err);
+    res.render('/auth/dashboard', {
+      error: err.message,
+    });
   }
 });
 // EDIT A BLOG RENDER
 router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
+  const editBlog = await Post.findById(req.params.id);
+  const locals = {
+    title: editBlog.title,
+    description: editBlog.body,
+  };
   try {
-    const editBlog = await Post.findById(req.params.id);
     if (editBlog) {
-      const { title, body, author } = req.body;
-
-      const locals = {
-        title: editBlog.title,
-        description: editBlog.body,
-      };
-
       res.render('auth/edit-blog', {
         locals,
         layout: dashboardLayout,
@@ -272,105 +333,137 @@ router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
           author: editBlog.author,
           id: editBlog._id,
         },
+        error: '',
       });
     }
   } catch (err) {
     console.log(err);
+    res.render('auth/edit-blog', {
+      locals,
+      layout: dashboardLayout,
+      data: {
+        title: editBlog.title,
+        body: editBlog.body,
+        author: editBlog.author,
+        id: editBlog._id,
+      },
+      error: err.message,
+    });
   }
 });
-// EDIT A BLOG RENDER
+// EDIT A BLOG
 router.post('/edit-blog/:id', authMiddleware, async (req, res) => {
+  const editBlog = await Post.findById(req.params.id);
+  const locals = {
+    title: editBlog ? editBlog.title : '',
+    description: editBlog ? editBlog.body : '',
+  };
   try {
-    const editBlog = await Post.findById(req.params.id);
     if (editBlog) {
       const { title, body, author } = req.body;
 
       await Post.findByIdAndUpdate(req.params.id, {
-        title,
-        body,
-        author,
+        title: title ? title : editBlog.title,
+        body: body ? body : editBlog.body,
+        author: author ? author : editBlog.author,
       });
 
       res.redirect('/auth/dashboard');
       res.status(201).send('Blog updated successfully');
     }
   } catch (err) {
-    console.log(err);
-  }
-});
-
-// UPDATE ADMIN BLOG ROUTE
-router.post('/admin/blog/:id', async (req, res) => {
-  const locals = {
-    title: 'Blogs',
-    description: 'Blogs',
-  };
-
-  try {
-    const blogsData = await Post.find(req.params.id);
-    if (blogsData) {
-      await Post.findByIdAndUpdate(req.params.id, {
-        title: req.body.title,
-        body: req.body.body,
-        author: req.body.author,
-      });
-      res.status(201).send('Post updated successfully');
-    } else {
-      res.status(404).send('Post not found');
-    }
-  } catch (error) {
-    res.status(400).send('Error:', error);
-  }
-
-  res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
-});
-
-// ADD ADMIN BLOG ROUTE
-router.put('/admin/blog', async (req, res) => {
-  const locals = {
-    title: 'Blogs',
-    description: 'Blogs',
-  };
-
-  try {
-    const postedBlog = await Post.insertOne({
-      title: req.body.title,
-      body: req.body.body,
-      author: req.body.author,
+    res.render('auth/edit-blog', {
+      layout: dashboardLayout,
+      locals,
+      data: {
+        title: editBlog ? editBlog.title : '',
+        body: editBlog ? editBlog.body : '',
+        author: editBlog ? editBlog.author : '',
+        id: editBlog ? editBlog._id : '',
+      },
+      error: err.message,
     });
-
-    if (postedBlog) {
-      res.status(201).send('Post added successfully');
-    } else {
-      res.status(400).send('Post not added');
-    }
-  } catch (error) {
-    res.status(400).send('Error:', error);
   }
-
-  res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
 });
 
-// DELETE BLOG ROUTE
-router.get('/admin/blog/:id', (req, res) => {
-  const locals = {
-    title: 'Blogs',
-    description: 'Blogs',
-  };
-
-  try {
-    const deletedBlog = Post.findByIdAndDelete(req.params.id);
-    if (deletedBlog) {
-      res.status(200).send('Post deleted successfully');
-    } else {
-      res.status(404).send('Post not found');
-    }
-  } catch (error) {
-    res.status(400).send('Error:', error);
-  }
-
-  res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+// EDIT A BLOG
+router.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/');
 });
+
+// // UPDATE ADMIN BLOG ROUTE
+// router.post('/admin/blog/:id', async (req, res) => {
+//   const locals = {
+//     title: 'Blogs',
+//     description: 'Blogs',
+//   };
+
+//   try {
+//     const blogsData = await Post.find(req.params.id);
+//     if (blogsData) {
+//       await Post.findByIdAndUpdate(req.params.id, {
+//         title: req.body.title,
+//         body: req.body.body,
+//         author: req.body.author,
+//       });
+//       res.status(201).send('Post updated successfully');
+//     } else {
+//       res.status(404).send('Post not found');
+//     }
+//   } catch (error) {
+//     res.status(400).send('Error:', error);
+//   }
+
+//   res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+// });
+
+// // ADD ADMIN BLOG ROUTE
+// router.put('/admin/blog', async (req, res) => {
+//   const locals = {
+//     title: 'Blogs',
+//     description: 'Blogs',
+//   };
+
+//   try {
+//     const postedBlog = await Post.insertOne({
+//       title: req.body.title,
+//       body: req.body.body,
+//       author: req.body.author,
+//     });
+
+//     if (postedBlog) {
+//       res.status(201).send('Post added successfully');
+//     } else {
+//       res.status(400).send('Post not added');
+//     }
+//   } catch (error) {
+//     res.status(400).send('Error:', error);
+//   }
+
+//   res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+// });
+
+// // DELETE BLOG ROUTE
+// router.get('/admin/blog/:id', (req, res) => {
+//   const locals = {
+//     title: 'Blogs',
+//     description: 'Blogs',
+//   };
+
+//   try {
+//     const deletedBlog = Post.findByIdAndDelete(req.params.id);
+//     if (deletedBlog) {
+//       res.status(200).send('Post deleted successfully');
+//     } else {
+//       res.status(404).send('Post not found');
+//     }
+//   } catch (error) {
+//     res.status(400).send('Error:', error);
+//   }
+
+//   res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+// });
 
 // ABOUT ROUTE
 router.get('/about', (req, res) => {

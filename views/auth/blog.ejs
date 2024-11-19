@@ -1,4 +1,7 @@
 <div class="dashboard-blog">
+  <% if(error) { %>
+  <p class="error-message"><%= error %></p>
+  <% }%>
   <h2><%= data.title %></h2>
 
   <p><%= data.body %></p>
