@@ -15,7 +15,7 @@ const app = express();
 
 const PORT = process.env.PORT || 5002;
 
-//used to pass data through body
+//used to pass data through body accesing it on each route request
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());

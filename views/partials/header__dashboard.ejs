@@ -3,6 +3,8 @@
     <a href="/" class="header__logo">Blogs</a>
 
     <nav>
+      <a href="/" class="<%= isActiveRoute('/', currentRoute) %>">Articles</a>
+
       <a class="<%= isActiveRoute('/about', currentRoute) %>" href="/about"
         >About</a
       >
