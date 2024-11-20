@@ -44,6 +44,7 @@ router.get('/login', async (req, res) => {
       locals,
       layout: loginLayout,
       error: '',
+      currentRoute: '/login',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
@@ -51,6 +52,7 @@ router.get('/login', async (req, res) => {
       locals,
       layout: loginLayout,
       error: err.message,
+      currentRoute: '/login',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
@@ -103,6 +105,7 @@ router.post('/login', async (req, res) => {
       locals,
       layout: loginLayout,
       error: err.message,
+      currentRoute: '/login',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
@@ -118,6 +121,7 @@ router.get('/register', async (req, res) => {
       locals,
       layout: registerLayout,
       error: '',
+      currentRoute: '/register',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
@@ -166,6 +170,7 @@ router.post('/register', async (req, res) => {
       locals,
       layout: registerLayout,
       error: err.message,
+      currentRoute: '/register',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
@@ -187,6 +192,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         layout: dashboardLayout,
         data: blogsData,
         error: '',
+        currentRoute: '/auth/dashboard',
       });
     }
   } catch (err) {
@@ -196,6 +202,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
       layout: dashboardLayout,
       data: blogsData ? blogsData : [],
       error: err.message,
+      currentRoute: 'auth/dashboard',
     });
   }
 });
@@ -233,6 +240,7 @@ router.get('/blog/:id', authMiddleware, async (req, res) => {
         post: selectedBlog,
         layout: dashboardLayout,
         error: '',
+        currentRoute: '/blog',
       });
     }
   } catch (err) {
@@ -242,6 +250,7 @@ router.get('/blog/:id', authMiddleware, async (req, res) => {
       post: selectedBlog ? selectedBlog : '',
       layout: dashboardLayout,
       error: err.message,
+      currentRoute: '/blog',
     });
   }
 });
@@ -258,6 +267,7 @@ router.get('/add-new-blog', authMiddleware, async (req, res) => {
       locals,
       layout: dashboardLayout,
       error: '',
+      currentRoute: '/add-new-blog',
     });
   } catch (err) {
     console.log(err);
@@ -265,6 +275,7 @@ router.get('/add-new-blog', authMiddleware, async (req, res) => {
       locals,
       layout: dashboardLayout,
       error: err.message,
+      currentRoute: '/add-new-blog',
     });
   }
 });
@@ -291,6 +302,7 @@ router.post('/add-new-blog', authMiddleware, async (req, res) => {
       locals,
       layout: dashboardLayout,
       error: '',
+      currentRoute: '/add-new-blog',
     });
   } catch (err) {
     console.log(err);
@@ -298,6 +310,7 @@ router.post('/add-new-blog', authMiddleware, async (req, res) => {
       locals,
       layout: dashboardLayout,
       error: err.message,
+      currentRoute: '/add-new-blog',
     });
   }
 });
@@ -333,6 +346,7 @@ router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
           author: editBlog.author,
           id: editBlog._id,
         },
+        currentRoute: '/edit-blog',
         error: '',
       });
     }
@@ -347,6 +361,7 @@ router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
         author: editBlog.author,
         id: editBlog._id,
       },
+      currentRoute: '/edit-blog',
       error: err.message,
     });
   }
@@ -366,6 +381,7 @@ router.post('/edit-blog/:id', authMiddleware, async (req, res) => {
         title: title ? title : editBlog.title,
         body: body ? body : editBlog.body,
         author: author ? author : editBlog.author,
+        updatedAt: Date.now(),
       });
 
       res.redirect('/auth/dashboard');
@@ -381,12 +397,13 @@ router.post('/edit-blog/:id', authMiddleware, async (req, res) => {
         author: editBlog ? editBlog.author : '',
         id: editBlog ? editBlog._id : '',
       },
+      currentRoute: '/edit-blog',
       error: err.message,
     });
   }
 });
 
-// EDIT A BLOG
+// LOG OUT
 router.get('/logout', (req, res) => {
   res.clearCookie('token');
   res.redirect('/');

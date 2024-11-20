@@ -3,8 +3,17 @@
     <a href="/" class="header__logo">Blogs</a>
 
     <nav>
-      <a href="/about">About</a>
-      <a href="/contact">Contact</a>
+      <a class="<%= isActiveRoute('/about', currentRoute) %>" href="/about"
+        >About</a
+      >
+      <a class="<%= isActiveRoute('/contact', currentRoute) %>" href="/contact"
+        >Contact</a
+      >
+      <a
+        class="<%= isActiveRoute('/auth/dashboard', currentRoute) %>"
+        href="/auth/dashboard"
+        >Admin</a
+      >
     </nav>
 
     <div class="logout__container">

@@ -6,13 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const input = document.querySelector('.searchInput');
 
   searchButton.addEventListener('click', () => {
+    console.log('searchButton clicked');
     searchBar.style.visibility = 'visible';
     searchBar.classList.add('open');
     input.focus();
   });
 
   closeSearchButton.addEventListener('click', () => {
-    searchBar.style.visibility = 'hidden';
     searchBar.classList.remove('open');
   });
   //
@@ -39,16 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, timeout);
   });
 });
-<div class='flex-container'>
-  <button class='search-btn' aria-expanded='false'>
-    Search
-  </button>
-  <div class='logout__container'>
-    <button type='submit' class='logoutBtn' aria-expanded='false'>
-      <a href='/auth/logout'> Log out </a>
-    </button>
-  </div>
-</div>;
 
 // ADD NEW BLOG
 

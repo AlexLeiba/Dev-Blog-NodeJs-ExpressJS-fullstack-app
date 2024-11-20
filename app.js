@@ -5,6 +5,8 @@ const connectDB = require('./server/models.db/dbConnection');
 const cookieParser = require('cookie-parser');
 const mongoStore = require('connect-mongo');
 const session = require('express-session');
+const methodOverride = require('method-override');
+const isActiveRoute = require('./server/helpers/routeHelpers');
 
 // Connect to the database mongoDB
 connectDB();
@@ -29,6 +31,9 @@ app.use(
   })
   // cookie:{}
 );
+app.use(methodOverride('_method'));
+
+app.locals.isActiveRoute = isActiveRoute;
 
 // Templating engine/ MIDDLEWARE / LAYOUTS
 app.use(expressLayouts);

@@ -55,6 +55,7 @@ router.get('', async (req, res) => {
       hasNextPage,
       prevPage,
       currentPage: parseInt(currentPage),
+      currentRoute: '/',
     }); //when accesing this route we visit the 'index' page from 'views' folder
   } catch (err) {
     console.log(err);
@@ -75,6 +76,7 @@ router.get('/blog/:id', async (req, res) => {
     res.render('blog', {
       locals,
       post: selectedBlog,
+      currentRoute: '/blog',
     });
   } catch (err) {
     console.log(err);
@@ -107,6 +109,7 @@ router.post('/search', async (req, res) => {
     res.render('search', {
       locals,
       data,
+      currentRoute: '/search',
     });
   } catch (err) {
     console.log(err);
@@ -136,7 +139,7 @@ router.post('/blog/:id', async (req, res) => {
     res.status(400).send('Error:', error);
   }
 
-  res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+  res.render('index', { locals, currentRoute: '/blog/:id' }); //when accesing this route we visit the 'index' page from 'views' folder
 });
 
 // ADD POST ROUTE
@@ -162,7 +165,7 @@ router.put('/blog/', async (req, res) => {
     res.status(400).send('Error:', error);
   }
 
-  res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+  res.render('index', { locals, currentRoute: '/blog' }); //when accesing this route we visit the 'index' page from 'views' folder
 });
 
 // DELETE POST ROUTE
@@ -188,12 +191,12 @@ router.get('blog/:id', (req, res) => {
 
 // ABOUT ROUTE
 router.get('/about', (req, res) => {
-  res.render('about');
+  res.render('about', { currentRoute: '/about' });
 });
 
 // CONTACT ROUTE
 router.get('/contact', (req, res) => {
-  res.render('contact');
+  res.render('contact', { currentRoute: '/contact' });
 });
 module.exports = router;
 
