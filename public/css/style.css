@@ -133,17 +133,25 @@ textarea {
   border: 1px solid var(--gray);
   border-radius: var(--border-radius-base);
   margin-bottom: 1rem;
-  background-color: var(--black);
+  background-color: var(--black) !important;
   color: var(--white);
+  outline: none;
+  box-shadow: none;
 }
 input[type='text']:focus,
 input[type='email']:focus,
 input[type='password']:focus,
 select:focus,
-textarea:focus {
+textarea:focus,
+input[type='text']:hover,
+input[type='email']:hover,
+input[type='password']:hover,
+select:hover,
+textarea:hover {
   outline: none;
   box-shadow: none;
   border: var(--white) 1px solid;
+  background-color: var(--black) !important;
 }
 
 input[type='checkbox'] {
@@ -504,38 +512,39 @@ input[type='search'] {
 
 .saveBtn {
   text-decoration: none;
-  border: none;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--black);
   padding: 0.7rem 1.5rem;
-  border-radius: var(--border-radius-base);
   color: var(--white);
   font-size: var(--font-size-sm);
+  border: var(--black) 1x solid !important;
+  border-radius: var(--border-radius-base) !important;
+  background-color: var(--gray);
+  font-weight: 500;
 
-  border: var(--black) 1px solid;
-  transition: border 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .saveBtn:hover {
   text-decoration: none;
-  border: none;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--black);
   padding: 0.7rem 1.5rem;
-  border-radius: var(--border-radius-base);
-  color: var(--white);
+  border-radius: var(--border-radius-base) !important;
+  border: var(--white) 1px solid;
+  color: var(--black);
   font-size: var(--font-size-sm);
 
-  border: var(--white) 1px solid;
-  transition: border 0.3s ease-in-out;
+  background-color: var(--gray-light);
+  font-weight: 500;
+
+  transition: background-color 0.3s ease-in-out;
 }
 
 .logoutBtn:hover,
@@ -603,7 +612,7 @@ input[type='search'] {
 .auth-form-container-title {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: c;
 }
 
 .flex {
