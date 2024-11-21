@@ -31,6 +31,14 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  user_id: {
+    type: String,
+    required: true,
+  },
+  public: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 postSchema.pre('validate', function (next) {

@@ -2,16 +2,16 @@
   <% if(error) { %>
   <p class="error-message"><%= error %></p>
   <% }%>
-  <h2>Blog posts</h2>
+  <h2>Public and Private articles</h2>
 
-  <a href="/auth/add-new-blog" class="addPostButton">+ Add New</a>
+  <a href="/admin/add-new-article" class="addPostButton">+ Add New</a>
 </div>
 
 <ul class="dashboard-blogs">
   <% data.forEach(element => { %>
   <li class="dashboard-blog">
     <div>
-      <a href="/auth/blog/<%= element._id %>">
+      <a href="/admin/article/<%= element._id %>">
         <div>
           <h3><%= element.title %></h3>
 
@@ -24,11 +24,11 @@
     </div>
     <div class="edit-delete-btns">
       <div class="edit">
-        <a href="/auth/edit-blog/<%= element._id %>">Edit</a>
+        <a href="/admin/edit-article/<%= element._id %>">Edit</a>
       </div>
 
       <form
-        action="/auth/delete-blog/<%= element._id %>?_method=DELETE"
+        action="/admin/delete-article/<%= element._id %>?_method=DELETE"
         method="POST"
       >
         <input type="submit" value="Delete" class="delete" />

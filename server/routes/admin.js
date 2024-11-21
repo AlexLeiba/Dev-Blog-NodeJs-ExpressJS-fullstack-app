@@ -24,11 +24,11 @@ const authMiddleware = async (req, res, next) => {
       next();
     } catch (err) {
       res.status(401);
-      res.redirect('/auth/login');
+      res.redirect('/admin/login');
     }
   } else {
     res.status(401);
-    res.redirect('/auth/login');
+    res.redirect('/admin/login');
   }
 };
 
@@ -40,7 +40,7 @@ router.get('/login', async (req, res) => {
   };
 
   try {
-    res.render('auth/login', {
+    res.render('admin/login', {
       locals,
       layout: loginLayout,
       error: '',
@@ -48,7 +48,7 @@ router.get('/login', async (req, res) => {
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
-    res.render('auth/login', {
+    res.render('admin/login', {
       locals,
       layout: loginLayout,
       error: err.message,
@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
         // REDIRECT TO DASHBOARD
 
         setTimeout(() => {
-          res.redirect('/auth/dashboard');
+          res.redirect('/admin/dashboard');
         }, 1000);
       } else {
         throw new Error('Please enter a valid email and password');
@@ -101,7 +101,7 @@ router.post('/login', async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.render('auth/login', {
+    res.render('admin/login', {
       locals,
       layout: loginLayout,
       error: err.message,
@@ -117,7 +117,7 @@ router.get('/register', async (req, res) => {
       title: 'Admin',
       description: 'Admin',
     };
-    res.render('auth/register', {
+    res.render('admin/register', {
       locals,
       layout: registerLayout,
       error: '',
@@ -131,8 +131,8 @@ router.get('/register', async (req, res) => {
 // REGISTER POST AND RENDER PAGE
 router.post('/register', async (req, res) => {
   const locals = {
-    title: 'Admin',
-    description: 'Admin',
+    title: 'Register',
+    description: 'Register',
   };
   try {
     const { username, password, email } = req.body;
@@ -166,7 +166,7 @@ router.post('/register', async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(400);
-    res.render('auth/register', {
+    res.render('admin/register', {
       locals,
       layout: registerLayout,
       error: err.message,
@@ -179,34 +179,38 @@ router.post('/register', async (req, res) => {
 //protected page
 router.get('/dashboard', authMiddleware, async (req, res) => {
   const locals = {
-    title: 'Dashboard',
-    description: 'Dashboard',
+    title: 'Admin Dashboard',
+    description: 'Admin Dashboard',
   };
 
   // SORT BY DATE
-  const blogsData = await Post.find().sort({ createdAt: -1 });
+  const blogsData = await Post.find({
+    user_id: req.user.id,
+  }).sort({
+    createdAt: -1,
+  });
   try {
     if (blogsData) {
-      res.render('auth/dashboard', {
+      res.render('admin/dashboard', {
         locals,
         layout: dashboardLayout,
         data: blogsData,
         error: '',
-        currentRoute: '/auth/dashboard',
+        currentRoute: '/admin/dashboard',
       });
     }
   } catch (err) {
     console.log(err);
-    res.render('auth/dashboard', {
+    res.render('admin/dashboard', {
       locals,
       layout: dashboardLayout,
       data: blogsData ? blogsData : [],
       error: err.message,
-      currentRoute: 'auth/dashboard',
+      currentRoute: 'admin/dashboard',
     });
   }
 });
-// router.get('/blog/:id', authMiddleware, async (req, res) => {
+// router.get('/article/:id', authMiddleware, async (req, res) => {
 //   try {
 //     const blogData = await Post.findById(req.params.id);
 
@@ -215,7 +219,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 //       description: blogData.description,
 //     };
 
-//     res.render('auth/blog', {
+//     res.render('admin/article', {
 //       locals,
 //       layout: dashboardLayout,
 //       data: blogData,
@@ -226,7 +230,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 // });
 
 // BLOG ROUTE, GET SELECTED BLOG
-router.get('/blog/:id', authMiddleware, async (req, res) => {
+router.get('/article/:id', authMiddleware, async (req, res) => {
   const selectedBlog = await Post.findById(req.params.id);
   try {
     if (selectedBlog) {
@@ -235,109 +239,116 @@ router.get('/blog/:id', authMiddleware, async (req, res) => {
         description: selectedBlog.description,
       };
 
-      res.render('blog', {
+      res.render('article', {
         locals,
         post: selectedBlog,
         layout: dashboardLayout,
         error: '',
-        currentRoute: '/blog',
+        currentRoute: '/article',
       });
     }
   } catch (err) {
     console.log(err);
-    res.render('blog', {
+    res.render('article', {
       locals,
       post: selectedBlog ? selectedBlog : '',
       layout: dashboardLayout,
       error: err.message,
-      currentRoute: '/blog',
+      currentRoute: '/article',
     });
   }
 });
 
-// ADD NEW BLOG RENDER PAGE
-router.get('/add-new-blog', authMiddleware, async (req, res) => {
+// ADD NEW BLOG - RENDER PAGE
+router.get('/add-new-article', authMiddleware, async (req, res) => {
   try {
     const locals = {
-      title: 'Add new blog',
-      description: 'Add new blog',
+      title: 'Add new article',
+      description: 'Add new article',
     };
 
-    res.render('auth/add-new-blog', {
+    res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
       error: '',
-      currentRoute: '/add-new-blog',
+      currentRoute: '/add-new-article',
     });
   } catch (err) {
     console.log(err);
-    res.render('auth/add-new-blog', {
+    res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
       error: err.message,
-      currentRoute: '/add-new-blog',
+      currentRoute: '/add-new-article',
     });
   }
 });
-// ADD NEW BLOG DATA
-router.post('/add-new-blog', authMiddleware, async (req, res) => {
+// ADD NEW BLOG - ADD DATA
+router.post('/add-new-article', authMiddleware, async (req, res) => {
   const locals = {
-    title: 'Add new blog',
-    description: 'Add new blog',
+    title: 'Add new article',
+    description: 'Add new article',
   };
   try {
-    const { title, body, author } = req.body;
+    const { title, body, author, public } = req.body;
 
     const selectedBlog = await Post.insertMany({
       title,
       body,
       author,
+      user_id: req.user.id,
+      public: public ? true : false,
     });
     if (selectedBlog) {
-      res.redirect('/auth/dashboard');
+      res.redirect('/admin/dashboard');
       res.status(201).json({ message: 'Blog added successfully' });
     }
 
-    res.render('auth/add-new-blog', {
+    res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
       error: '',
-      currentRoute: '/add-new-blog',
+      currentRoute: '/add-new-article',
     });
   } catch (err) {
     console.log(err);
-    res.render('auth/add-new-blog', {
+    res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
       error: err.message,
-      currentRoute: '/add-new-blog',
+      currentRoute: '/add-new-article',
     });
   }
 });
 // DELETE A BLOG
-router.post('/delete-blog/:id', authMiddleware, async (req, res) => {
+router.post('/delete-article/:id', authMiddleware, async (req, res) => {
+  const deletedBlog = await Post.findByIdAndDelete(req.params.id);
+  const selectedBlog = await Post.findById(req.params.id);
   try {
-    const deletedBlog = await Post.findByIdAndDelete(req.params.id);
-    if (deletedBlog) {
-      res.redirect('/auth/dashboard');
-      res.status(200).send('Blog deleted successfully');
+    if (deletedBlog && selectedBlog.user_id === req.user.id) {
+      res
+        .redirect('/admin/dashboard')
+        .status(200)
+        .send('Blog deleted successfully');
+    } else {
+      throw new Error('Unauthorized');
     }
   } catch (err) {
-    res.render('/auth/dashboard', {
+    res.render('/admin/dashboard', {
       error: err.message,
     });
   }
 });
-// EDIT A BLOG RENDER
-router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
+// EDIT A BLOG - RENDER PAGE
+router.get('/edit-article/:id', authMiddleware, async (req, res) => {
   const editBlog = await Post.findById(req.params.id);
   const locals = {
     title: editBlog.title,
     description: editBlog.body,
   };
   try {
-    if (editBlog) {
-      res.render('auth/edit-blog', {
+    if (editBlog && req.user.id === editBlog.user_id) {
+      res.render('admin/edit-article', {
         locals,
         layout: dashboardLayout,
         data: {
@@ -345,14 +356,17 @@ router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
           body: editBlog.body,
           author: editBlog.author,
           id: editBlog._id,
+          public: editBlog.public,
         },
-        currentRoute: '/edit-blog',
+        currentRoute: '/edit-article',
         error: '',
       });
+    } else {
+      throw new Error('Unauthorized');
     }
   } catch (err) {
     console.log(err);
-    res.render('auth/edit-blog', {
+    res.render('admin/edit-article', {
       locals,
       layout: dashboardLayout,
       data: {
@@ -360,35 +374,38 @@ router.get('/edit-blog/:id', authMiddleware, async (req, res) => {
         body: editBlog.body,
         author: editBlog.author,
         id: editBlog._id,
+        public: editBlog.public,
       },
-      currentRoute: '/edit-blog',
+      currentRoute: '/edit-article',
       error: err.message,
     });
   }
 });
-// EDIT A BLOG
-router.post('/edit-blog/:id', authMiddleware, async (req, res) => {
+// EDIT A BLOG - DATA
+router.post('/edit-article/:id', authMiddleware, async (req, res) => {
   const editBlog = await Post.findById(req.params.id);
   const locals = {
     title: editBlog ? editBlog.title : '',
     description: editBlog ? editBlog.body : '',
   };
   try {
-    if (editBlog) {
+    if (editBlog && req.user.id === editBlog.user_id) {
       const { title, body, author } = req.body;
-
       await Post.findByIdAndUpdate(req.params.id, {
         title: title ? title : editBlog.title,
         body: body ? body : editBlog.body,
         author: author ? author : editBlog.author,
         updatedAt: Date.now(),
+        public: editBlog.public,
       });
 
-      res.redirect('/auth/dashboard');
+      res.redirect('/admin/dashboard');
       res.status(201).send('Blog updated successfully');
+    } else {
+      throw new Error('Unauthorized');
     }
   } catch (err) {
-    res.render('auth/edit-blog', {
+    res.render('admin/edit-article', {
       layout: dashboardLayout,
       locals,
       data: {
@@ -396,8 +413,9 @@ router.post('/edit-blog/:id', authMiddleware, async (req, res) => {
         body: editBlog ? editBlog.body : '',
         author: editBlog ? editBlog.author : '',
         id: editBlog ? editBlog._id : '',
+        public: editBlog ? editBlog.public : '',
       },
-      currentRoute: '/edit-blog',
+      currentRoute: '/edit-article',
       error: err.message,
     });
   }
@@ -410,7 +428,7 @@ router.get('/logout', (req, res) => {
 });
 
 // // UPDATE ADMIN BLOG ROUTE
-// router.post('/admin/blog/:id', async (req, res) => {
+// router.post('/admin/article/:id', async (req, res) => {
 //   const locals = {
 //     title: 'Blogs',
 //     description: 'Blogs',
@@ -436,7 +454,7 @@ router.get('/logout', (req, res) => {
 // });
 
 // // ADD ADMIN BLOG ROUTE
-// router.put('/admin/blog', async (req, res) => {
+// router.put('/admin/article', async (req, res) => {
 //   const locals = {
 //     title: 'Blogs',
 //     description: 'Blogs',
@@ -462,7 +480,7 @@ router.get('/logout', (req, res) => {
 // });
 
 // // DELETE BLOG ROUTE
-// router.get('/admin/blog/:id', (req, res) => {
+// router.get('/admin/article/:id', (req, res) => {
 //   const locals = {
 //     title: 'Blogs',
 //     description: 'Blogs',

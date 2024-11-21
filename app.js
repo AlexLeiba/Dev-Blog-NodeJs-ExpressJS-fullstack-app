@@ -51,7 +51,7 @@ app.use(express.static('public'));
 app.use('/', require('./server/routes/routes'));
 
 // AUTH ROUTES
-app.use('/auth', require('./server/routes/auth'));
+app.use('/admin', require('./server/routes/admin'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

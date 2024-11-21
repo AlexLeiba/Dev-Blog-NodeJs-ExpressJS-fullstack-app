@@ -1,0 +1,51 @@
+<form
+  class="auth-form"
+  action="/admin/edit-article/<%= data.id %>"
+  method="POST"
+>
+  <div class="auth-form-container">
+    <div class="auth-form-container-title">
+      <h1>Edit Article</h1>
+
+      <p><%= data.public ? 'Public' : 'Private' %></p>
+      <!-- <div class="flex">
+        <p>Public:</p>
+
+        <label class="custom-checkbox">
+          <input value="true" type="checkbox" name="public" id="public" <%=
+          data.public ? 'checked' : '' %> />
+          <span class="checkmark"></span>
+        </label>
+      </div> -->
+    </div>
+
+    <label for="username">Title</label>
+    <input
+      type="text"
+      name="title"
+      id="title"
+      required
+      value="<%= data.title %>"
+    />
+
+    <label for="body">Body</label>
+    <textarea rows="6" name="body" id="body" value="<%= data.body %>" required>
+      <%= data.body %></textarea
+    >
+
+    <label for="author">Author</label>
+    <input
+      type="text"
+      name="author"
+      id="author"
+      value="<%= data.author %>"
+      required
+    />
+
+    <% if(error) { %>
+    <p class="error-message"><%= error %></p>
+    <% }%>
+
+    <button type="submit" class="saveBtn">Save</button>
+  </div>
+</form>

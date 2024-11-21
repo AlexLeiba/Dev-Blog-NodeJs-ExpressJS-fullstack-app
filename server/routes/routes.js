@@ -23,8 +23,8 @@ const Post = require('../models.db/models');
 // HOME ROUTE, GET ARTICLES PAGINATED
 router.get('', async (req, res) => {
   const locals = {
-    title: 'Blogs',
-    description: 'Blogs',
+    title: 'Public Articles',
+    description: 'Public Articles',
   };
 
   try {
@@ -35,13 +35,24 @@ router.get('', async (req, res) => {
     //   .limit(articlePerPage)
     //   .skip((page - 1) * articlePerPage);
 
-    const blogsData = await Post.aggregate([{ $sort: { createdAt: -1 } }])
+    // const blogsData = await Post.find({ public: true })
+    //   .aggregate([{ $sort: { createdAt: -1 } }])
+    //   .skip((currentPage - 1) * articlePerPage)
+    //   .limit(articlePerPage)
+    //   .exec();
+
+    const blogsData = await Post.find({
+      public: true,
+    })
+      .sort({
+        createdAt: -1,
+      })
       .skip((currentPage - 1) * articlePerPage)
       .limit(articlePerPage)
       .exec();
 
     const count = await Post.countDocuments();
-    console.log('🚀 ~ \n\n router.get ~ n:', count);
+    // console.log('🚀 ~ \n\n router.get ~ n:', count);
 
     const nextPage = parseInt(currentPage) + 1;
     const prevPage = parseInt(currentPage) - 1;
@@ -64,7 +75,7 @@ router.get('', async (req, res) => {
 });
 
 // BLOG POST ROUTE, GET SELECTED POST
-router.get('/blog/:id', async (req, res) => {
+router.get('/article/:id', async (req, res) => {
   try {
     const selectedBlog = await Post.findById(req.params.id);
 
@@ -73,10 +84,10 @@ router.get('/blog/:id', async (req, res) => {
       description: selectedBlog.description,
     };
 
-    res.render('blog', {
+    res.render('article', {
       locals,
       post: selectedBlog,
-      currentRoute: '/blog',
+      currentRoute: '/article',
     });
   } catch (err) {
     console.log(err);
@@ -117,7 +128,7 @@ router.post('/search', async (req, res) => {
 });
 
 // UPDATE POST ROUTE
-router.post('/blog/:id', async (req, res) => {
+router.post('/article/:id', async (req, res) => {
   const locals = {
     title: 'Blogs',
     description: 'Blogs',
@@ -143,7 +154,7 @@ router.post('/blog/:id', async (req, res) => {
 });
 
 // ADD POST ROUTE
-router.put('/blog/', async (req, res) => {
+router.put('/article/', async (req, res) => {
   const locals = {
     title: 'Blogs',
     description: 'Blogs',

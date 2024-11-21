@@ -1,19 +1,15 @@
-<form class="auth-form" action="/auth/register" method="POST">
+<form class="auth-form" action="/admin/login" method="POST">
   <div class="auth-form-container">
-    <h1>Register</h1>
-    <label for="username">Username</label>
-    <input type="text" name="username" id="username" required />
-
+    <h1>Log in</h1>
     <label for="email">Email</label>
     <input type="email" name="email" id="email" required />
 
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required />
-
     <% if(error) { %>
     <p class="error-message"><%= error %></p>
     <% }%>
 
-    <button class="authBtn" type="submit">Register</button>
+    <button class="authBtn" type="submit">Login</button>
   </div>
 </form>

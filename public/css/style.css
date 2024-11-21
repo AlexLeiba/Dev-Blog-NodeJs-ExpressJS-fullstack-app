@@ -123,6 +123,7 @@ body {
 input[type='text'],
 input[type='email'],
 input[type='password'],
+input[type='number'],
 select,
 textarea {
   font-family: 'Faculty Glyphic', sans-serif;
@@ -143,6 +144,13 @@ textarea:focus {
   outline: none;
   box-shadow: none;
   border: var(--white) 1px solid;
+}
+
+input[type='checkbox'] {
+  background-color: var(--black) !important;
+  padding: 0.5rem;
+  height: 1.6rem;
+  width: 1.6rem;
 }
 
 .btn {
@@ -590,4 +598,66 @@ input[type='search'] {
 .addPostButton:hover {
   color: var(--white);
   transition: color 0.3s ease-in-out;
+}
+
+.auth-form-container-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 
+ */
+
+/* Hide the default checkbox */
+.custom-checkbox input {
+  display: none;
+}
+
+/* Create a custom checkbox */
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Style the custom checkmark */
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--white); /* Default border color */
+  border-radius: 4px; /* Rounded corners */
+  position: relative; /* Positioning for the pseudo-element */
+  margin-right: 10px; /* Space between checkbox and label */
+}
+
+/* Change the color when checked */
+.custom-checkbox input:checked + .checkmark {
+  background-color: var(--black); /* Background color when checked */
+  border-color: var(--white); /* Border color when checked */
+}
+
+/* Checkmark icon */
+.checkmark::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white; /* Color of the checkmark icon */
+  border-width: 0 2px 2px 0; /* Adjust thickness of the checkmark */
+  transform: rotate(45deg); /* Rotate to form a checkmark */
+  opacity: 0; /* Hide checkmark initially */
+}
+
+/* Show the checkmark when checked */
+.custom-checkbox input:checked + .checkmark::after {
+  opacity: 1; /* Show checkmark */
 }
