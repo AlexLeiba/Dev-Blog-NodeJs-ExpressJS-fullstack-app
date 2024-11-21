@@ -7,16 +7,16 @@
     <div class="auth-form-container-title">
       <h1>Edit Article</h1>
 
-      <p><%= data.public ? 'Public' : 'Private' %></p>
-      <!-- <div class="flex">
+      <div class="flex">
         <p>Public:</p>
 
         <label class="custom-checkbox">
-          <input value="true" type="checkbox" name="public" id="public" <%=
-          data.public ? 'checked' : '' %> />
+          <input value="<% if(data.public) { %>true<% } else { %>false<% } %>"
+          type="checkbox" name="public" id="public" <%= data.public ? 'checked'
+          : '' %> />
           <span class="checkmark"></span>
         </label>
-      </div> -->
+      </div>
     </div>
 
     <label for="username">Title</label>

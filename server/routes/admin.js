@@ -346,6 +346,7 @@ router.get('/edit-article/:id', authMiddleware, async (req, res) => {
     title: editBlog.title,
     description: editBlog.body,
   };
+
   try {
     if (editBlog && req.user.id === editBlog.user_id) {
       res.render('admin/edit-article', {
@@ -388,15 +389,17 @@ router.post('/edit-article/:id', authMiddleware, async (req, res) => {
     title: editBlog ? editBlog.title : '',
     description: editBlog ? editBlog.body : '',
   };
+
   try {
     if (editBlog && req.user.id === editBlog.user_id) {
-      const { title, body, author } = req.body;
+      const { title, body, author, public } = req.body;
       await Post.findByIdAndUpdate(req.params.id, {
         title: title ? title : editBlog.title,
         body: body ? body : editBlog.body,
         author: author ? author : editBlog.author,
         updatedAt: Date.now(),
-        public: editBlog.public,
+        public: public === 'false' ? true : false,
+        error: '',
       });
 
       res.redirect('/admin/dashboard');
@@ -414,6 +417,7 @@ router.post('/edit-article/:id', authMiddleware, async (req, res) => {
         author: editBlog ? editBlog.author : '',
         id: editBlog ? editBlog._id : '',
         public: editBlog ? editBlog.public : '',
+        error: err.message,
       },
       currentRoute: '/edit-article',
       error: err.message,
