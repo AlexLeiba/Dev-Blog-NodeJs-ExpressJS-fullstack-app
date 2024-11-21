@@ -105,9 +105,13 @@ body {
 .header nav a.active {
   text-decoration: none;
   color: var(--white);
+
+  transition: color 0.3s ease-in-out;
 }
 .header nav a:hover {
   text-decoration: underline;
+
+  transition: text-decoration 0.3s ease-in-out;
 }
 
 .header__logo {
@@ -128,6 +132,17 @@ textarea {
   border: 1px solid var(--gray);
   border-radius: var(--border-radius-base);
   margin-bottom: 1rem;
+  background-color: var(--black);
+  color: var(--white);
+}
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: none;
+  border: var(--white) 1px solid;
 }
 
 .btn {
@@ -247,6 +262,8 @@ img {
   text-decoration: none;
   border-radius: var(--border-radius-base) !important;
   border: var(--black) 1px solid;
+
+  transition: border 0.3s ease-in-out;
 }
 .searchClose:hover {
   position: absolute;
@@ -260,6 +277,8 @@ img {
   text-decoration: none;
   border-radius: var(--border-radius-base) !important;
   border: var(--white) 1px solid;
+
+  transition: border 0.3s ease-in-out;
 }
 
 .search-container {
@@ -278,6 +297,8 @@ img {
   border-radius: var(--border-radius-base) !important;
   border: var(--black) 1px solid;
   margin-left: 1rem;
+
+  transition: border 0.3s ease-in-out;
 }
 .search-btn:hover {
   padding: 0.6rem 1rem;
@@ -288,6 +309,8 @@ img {
   border-radius: var(--border-radius-base) !important;
   border: var(--white) 1px solid;
   margin-left: 1rem;
+
+  transition: border 0.3s ease-in-out;
 }
 
 /* SEARCH BUTTON FROM HEADER */
@@ -299,6 +322,8 @@ img {
   text-decoration: none;
   border-radius: var(--border-radius-base) !important;
   border: var(--black) 1px solid;
+
+  transition: border 0.3s ease-in-out;
 }
 .searchBtn:hover {
   padding: 0.5rem 1rem;
@@ -308,12 +333,16 @@ img {
   text-decoration: none;
   border-radius: var(--border-radius-base) !important;
   border: var(--white) 1px solid;
+
+  transition: border 0.3s ease-in-out;
 }
 
 input[type='search'] {
+  box-shadow: none;
+  outline: none;
   padding: 0.8rem;
   text-decoration: none;
-  border: none;
+  border: var(--white) 1px solid;
   border-radius: var(--border-radius-base);
 }
 
@@ -404,10 +433,28 @@ input[type='search'] {
   border-radius: var(--border-radius-base);
   color: var(--white);
   font-size: var(--font-size-sm);
+
+  border: var(--gray) 1px solid;
+  transition: border 0.3s ease-in-out;
 }
-.dashboard-blogs li .edit-delete-btns .edit a {
+.dashboard-blogs li .edit-delete-btns .edit:hover {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--gray);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-base);
   color: var(--white);
+  font-size: var(--font-size-sm);
+
+  border: var(--white) 1px solid;
+  transition: border 0.3s ease-in-out;
 }
+/* .dashboard-blogs li .edit-delete-btns .edit a {
+  color: var(--white);
+} */
 
 .dashboard-blogs li .edit-delete-btns .delete {
   display: flex;
@@ -421,6 +468,25 @@ input[type='search'] {
   font-size: var(--font-size-sm);
   border: none;
   cursor: pointer;
+
+  border: var(--black) 1px solid;
+  transition: border 0.3s ease-in-out;
+}
+.dashboard-blogs li .edit-delete-btns .delete:hover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--black);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-base);
+  color: var(--white);
+  font-size: var(--font-size-sm);
+  border: none;
+  cursor: pointer;
+
+  border: var(--white) 1px solid;
+  transition: border 0.3s ease-in-out;
 }
 
 .error-message {
@@ -441,7 +507,29 @@ input[type='search'] {
   border-radius: var(--border-radius-base);
   color: var(--white);
   font-size: var(--font-size-sm);
+
+  border: var(--black) 1px solid;
+  transition: border 0.3s ease-in-out;
 }
+
+.saveBtn:hover {
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--black);
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--border-radius-base);
+  color: var(--white);
+  font-size: var(--font-size-sm);
+
+  border: var(--white) 1px solid;
+  transition: border 0.3s ease-in-out;
+}
+
 .logoutBtn:hover,
 .authBtn {
   text-decoration: none;
@@ -458,6 +546,8 @@ input[type='search'] {
 
   background-color: var(--black);
   font-weight: 500;
+
+  transition: background-color 0.3s ease-in-out;
 }
 .logoutBtn,
 .authBtn:hover {
@@ -474,6 +564,8 @@ input[type='search'] {
   border-radius: var(--border-radius-base) !important;
   background-color: var(--gray-light);
   font-weight: 500;
+
+  transition: background-color 0.3s ease-in-out;
 }
 
 .logoutBtn a {
@@ -487,4 +579,15 @@ input[type='search'] {
 
 .dashboard-blog {
   padding: 0;
+}
+
+.addPostButton {
+  color: var(--black);
+
+  transition: color 0.3s ease-in-out;
+}
+
+.addPostButton:hover {
+  color: var(--white);
+  transition: color 0.3s ease-in-out;
 }
