@@ -9,11 +9,12 @@ const methodOverride = require('method-override');
 const isActiveRoute = require('./server/helpers/routeHelpers');
 
 // Connect to the database mongoDB
-connectDB();
 
 const app = express();
 
 const PORT = process.env.PORT || 5002;
+
+connectDB();
 
 //used to pass data through body accesing it on each route request
 app.use(express.urlencoded({ extended: true }));
@@ -31,7 +32,7 @@ app.use(
   })
   // cookie:{}
 );
-app.use(methodOverride('_method'));
+// app.use(methodOverride('_method'));
 
 app.locals.isActiveRoute = isActiveRoute;
 

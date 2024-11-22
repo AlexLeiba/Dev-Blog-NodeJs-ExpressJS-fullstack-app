@@ -14,13 +14,14 @@
       <li>
         <a href="/article/<%= post._id %>">
           <div>
-            <span><%= post.title %></span>
+            <h4><%= post.title %></h4>
             <p class="dashboard-author">Author: <%= post.author %></p>
           </div>
-
-          <p class="created-date-time">
-            Created date: <%= post.createdAt.toDateString() %>
-          </p>
+          <div>
+            <p class="created-date-time">
+              Created : <%= post.createdAt.toDateString() %>
+            </p>
+          </div>
         </a>
         <div class="list-separator"></div>
       </li>

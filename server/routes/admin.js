@@ -324,10 +324,11 @@ router.post('/add-new-article', authMiddleware, async (req, res) => {
 });
 // DELETE A BLOG
 router.post('/delete-article/:id', authMiddleware, async (req, res) => {
+  console.log('🚀 ~ router.post ~ req:', req);
   const deletedBlog = await Post.findByIdAndDelete(req.params.id);
-  const selectedBlog = await Post.findById(req.params.id);
+  // const selectedBlog = await Post.findById(req.params.id);
   try {
-    if (deletedBlog && selectedBlog.user_id === req.user.id) {
+    if (deletedBlog) {
       res
         .redirect('/admin/dashboard')
         .status(200)

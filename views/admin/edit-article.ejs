@@ -19,15 +19,31 @@
       </div>
     </div>
 
-    <label for="username">Title *</label>
-    <input
-      placeholder="type here"
-      type="text"
-      name="title"
-      id="title"
-      required
-      value="<%= data.title %>"
-    />
+    <div class="flex-admin-form">
+      <div>
+        <label for="username">Title *</label>
+        <input
+          placeholder="type here"
+          type="text"
+          name="title"
+          id="title"
+          required
+          value="<%= data.title %>"
+        />
+      </div>
+
+      <div>
+        <label for="author">Author *</label>
+        <input
+          placeholder="type here"
+          type="text"
+          name="author"
+          id="author"
+          value="<%= data.author %>"
+          required
+        />
+      </div>
+    </div>
 
     <label for="body">Description *</label>
     <textarea
@@ -40,16 +56,6 @@
     >
       <%= data.body %></textarea
     >
-
-    <label for="author">Author *</label>
-    <input
-      placeholder="type here"
-      type="text"
-      name="author"
-      id="author"
-      value="<%= data.author %>"
-      required
-    />
 
     <h3>Optional:</h3>
 
