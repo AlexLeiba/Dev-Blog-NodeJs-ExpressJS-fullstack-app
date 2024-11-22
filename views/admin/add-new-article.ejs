@@ -25,13 +25,53 @@
     </div>
 
     <label for="username">Title</label>
-    <input type="text" name="title" id="title" required value="" />
+    <input
+      placeholder="type here"
+      type="text"
+      name="title"
+      id="title"
+      required
+      value=""
+    />
 
     <label for="body">Body</label>
-    <textarea name="body" id="body" required value="" rows="6"></textarea>
+    <textarea
+      placeholder="type here"
+      name="body"
+      id="body"
+      required
+      value=""
+      rows="6"
+    ></textarea>
 
     <label for="author">Author</label>
-    <input type="text" name="author" id="author" value="" />
+    <input
+      placeholder="type here"
+      type="text"
+      name="author"
+      id="author"
+      value=""
+    />
+
+    <h3>Optional:</h3>
+
+    <label for="urlLink">Url:</label>
+    <input
+      placeholder="type here"
+      type="text"
+      name="urlLink"
+      id="urlLink"
+      value=""
+    />
+
+    <label for="username">Title url:</label>
+    <input
+      type="text"
+      name="titleUrl"
+      id="titleUrl"
+      value=""
+      placeholder="type here"
+    />
 
     <% if(error) { %>
     <p class="error-message"><%= error %></p>

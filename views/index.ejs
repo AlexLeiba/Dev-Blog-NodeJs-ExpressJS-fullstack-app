@@ -3,11 +3,7 @@
   <p class="author__body">I'm a front-end developer</p>
 </div>
 
-<img
-  src="https://www.w3schools.com/w3css/img_lights.jpg"
-  alt="hero-image"
-  class="hero-image"
-/>
+<img src="/img/web-dev-bg.jpeg" alt="hero-image" class="hero-image" />
 
 <section class="articles">
   <h2 class="articles__heading">Latest Articles</h2>
@@ -19,12 +15,12 @@
         <a href="/article/<%= post._id %>">
           <div>
             <span><%= post.title %></span>
-            <p class="dashboard-author"><%= post.author %></p>
+            <p class="dashboard-author">Author: <%= post.author %></p>
           </div>
 
-          <span class="article-list-date"
-            ><%= post.createdAt.toDateString() %></span
-          >
+          <p class="created-date-time">
+            Created date: <%= post.createdAt.toDateString() %>
+          </p>
         </a>
         <div class="list-separator"></div>
       </li>
@@ -36,14 +32,14 @@
     <!-- PREV -->
 
     <% if(currentPage > 1 && prevPage !== null) { %>
-    <a href="/?page=<%= prevPage %>" class="pagination"> &lt; Previous posts</a>
+    <a href="/?page=<%= prevPage %>" class="pagination"> &lt; Previous page</a>
     <% }else{%>
     <div></div>
     <%} %>
 
     <!-- NEXT -->
     <% if(hasNextPage) { %>
-    <a href="/?page=<%= nextPage %>" class="pagination"> Next posts &gt;</a>
+    <a href="/?page=<%= nextPage %>" class="pagination"> Next page &gt;</a>
     <% }else{%>
     <div></div>
     <%} %>

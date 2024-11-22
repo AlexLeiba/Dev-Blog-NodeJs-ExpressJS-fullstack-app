@@ -7,4 +7,12 @@
   <p><%= data.body %></p>
 
   <p><%= data.author %></p>
+
+  <p>Created at: <%= data.createdAt.toDateString() %></p>
+
+  <p>Updated at: <%= data.updatedAt.toDateString() %></p>
+
+  <div class="flex">
+    <a href="<%= post.urlLink %>" target="_blank"><%= post.titleUrl %></a>
+  </div>
 </div>

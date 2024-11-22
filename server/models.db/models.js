@@ -39,6 +39,14 @@ const postSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  urlLink: {
+    type: String,
+    required: false,
+  },
+  titleUrl: {
+    type: String,
+    required: false,
+  },
 });
 
 postSchema.pre('validate', function (next) {

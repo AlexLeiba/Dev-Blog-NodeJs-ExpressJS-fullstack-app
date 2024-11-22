@@ -1,10 +1,12 @@
 <div class="author">
   <h1 class="author__heading">Search Results</h1>
+
+  <% if (data?.length === 0) { %>
+  <p class="no-search-results-found">No results found</p>
+  <% } %>
 </div>
 
 <section class="articles">
-  <h2 class="articles__heading">Latest Articles</h2>
-
   <ul class="article-ul">
     <% data?.forEach(post => { %>
     <div>
@@ -12,7 +14,7 @@
         <a href="/article/<%= post._id %>">
           <div>
             <span><%= post.title %></span>
-            <p><%= post.body %></p>
+            <p class="dashboard-author"><%= post.author %></p>
           </div>
 
           <span class="article-list-date"

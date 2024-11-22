@@ -1,7 +1,17 @@
 <div class="dashboard-blog">
   <h2><%= post.title %></h2>
 
-  <p><%- post.body %></p>
+  <p><%= post.body %></p>
 
   <p><%= post.author %></p>
+
+  <p>Created at: <%= post.createdAt.toDateString() %></p>
+
+  <p>Updated at: <%= post.updatedAt.toDateString() %></p>
+
+  <div>
+    <a class="urlLink" href="<%= post.urlLink %>" target="_blank"
+      >Url: <%= post.titleUrl %></a
+    >
+  </div>
 </div>

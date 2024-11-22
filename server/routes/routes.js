@@ -51,7 +51,7 @@ router.get('', async (req, res) => {
       .limit(articlePerPage)
       .exec();
 
-    const count = await Post.countDocuments();
+    const count = await Post.find({ public: true }).countDocuments();
     // console.log('🚀 ~ \n\n router.get ~ n:', count);
 
     const nextPage = parseInt(currentPage) + 1;
@@ -115,6 +115,7 @@ router.post('/search', async (req, res) => {
           },
         },
       ],
+      public: true,
     });
 
     res.render('search', {

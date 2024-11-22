@@ -19,8 +19,9 @@
       </div>
     </div>
 
-    <label for="username">Title</label>
+    <label for="username">Title *</label>
     <input
+      placeholder="type here"
       type="text"
       name="title"
       id="title"
@@ -28,18 +29,48 @@
       value="<%= data.title %>"
     />
 
-    <label for="body">Body</label>
-    <textarea rows="6" name="body" id="body" value="<%= data.body %>" required>
+    <label for="body">Description *</label>
+    <textarea
+      placeholder="type here"
+      rows="6"
+      name="body"
+      id="body"
+      value="<%= data.body %>"
+      required
+    >
       <%= data.body %></textarea
     >
 
-    <label for="author">Author</label>
+    <label for="author">Author *</label>
     <input
+      placeholder="type here"
       type="text"
       name="author"
       id="author"
       value="<%= data.author %>"
       required
+    />
+
+    <h3>Optional:</h3>
+
+    <label for="urlLink">Url:</label>
+    <input
+      placeholder="type here"
+      type="text"
+      name="urlLink"
+      id="urlLink"
+      required
+      value="<%= data.urlLink %>"
+    />
+
+    <label for="username">Title url:</label>
+    <input
+      placeholder="type here"
+      type="text"
+      name="titleUrl"
+      id="titleUrl"
+      required
+      value="<%= data.titleUrl %>"
     />
 
     <% if(error) { %>

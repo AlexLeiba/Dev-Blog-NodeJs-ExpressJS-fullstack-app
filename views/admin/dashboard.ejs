@@ -17,22 +17,29 @@
 
           <p class="dashboard-author"><%= element.author %></p>
           <p class="created-date-time">
-            <%= element.createdAt.toDateString() %>
+            Created: <%= element.createdAt.toDateString() %>
           </p>
         </div>
       </a>
     </div>
-    <div class="edit-delete-btns">
-      <div class="edit">
-        <a href="/admin/edit-article/<%= element._id %>">Edit</a>
+    <div class="buttons-label-container">
+      <div>
+        <p class="public-label">
+          <% if(element.public) { %>Public<% } else { %>Private<% } %>
+        </p>
       </div>
+      <div class="edit-delete-btns">
+        <div class="edit">
+          <a href="/admin/edit-article/<%= element._id %>">Edit</a>
+        </div>
 
-      <form
-        action="/admin/delete-article/<%= element._id %>?_method=DELETE"
-        method="POST"
-      >
-        <input type="submit" value="Delete" class="delete" />
-      </form>
+        <form
+          action="/admin/delete-article/<%= element._id %>?_method=DELETE"
+          method="POST"
+        >
+          <input type="submit" value="Delete" class="delete" />
+        </form>
+      </div>
     </div>
   </li>
   <div class="list-separator"></div>

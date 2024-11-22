@@ -290,7 +290,7 @@ router.post('/add-new-article', authMiddleware, async (req, res) => {
     description: 'Add new article',
   };
   try {
-    const { title, body, author, public } = req.body;
+    const { title, body, author, public, urlLink, titleUrl } = req.body;
 
     const selectedBlog = await Post.insertMany({
       title,
@@ -298,6 +298,8 @@ router.post('/add-new-article', authMiddleware, async (req, res) => {
       author,
       user_id: req.user.id,
       public: public ? true : false,
+      urlLink: urlLink ? urlLink : '',
+      titleUrl: titleUrl ? titleUrl : '',
     });
     if (selectedBlog) {
       res.redirect('/admin/dashboard');
@@ -358,6 +360,8 @@ router.get('/edit-article/:id', authMiddleware, async (req, res) => {
           author: editBlog.author,
           id: editBlog._id,
           public: editBlog.public,
+          urlLink: editBlog.urlLink,
+          titleUrl: editBlog.titleUrl,
         },
         currentRoute: '/edit-article',
         error: '',
@@ -376,6 +380,8 @@ router.get('/edit-article/:id', authMiddleware, async (req, res) => {
         author: editBlog.author,
         id: editBlog._id,
         public: editBlog.public,
+        urlLink: editBlog.urlLink,
+        titleUrl: editBlog.titleUrl,
       },
       currentRoute: '/edit-article',
       error: err.message,
@@ -392,13 +398,15 @@ router.post('/edit-article/:id', authMiddleware, async (req, res) => {
 
   try {
     if (editBlog && req.user.id === editBlog.user_id) {
-      const { title, body, author, public } = req.body;
+      const { title, body, author, public, urlLink, titleUrl } = req.body;
       await Post.findByIdAndUpdate(req.params.id, {
         title: title ? title : editBlog.title,
         body: body ? body : editBlog.body,
         author: author ? author : editBlog.author,
         updatedAt: Date.now(),
         public: public === 'false' ? true : false,
+        urlLink: urlLink ? urlLink : editBlog.urlLink,
+        titleUrl: titleUrl ? titleUrl : editBlog.titleUrl,
         error: '',
       });
 
@@ -417,6 +425,8 @@ router.post('/edit-article/:id', authMiddleware, async (req, res) => {
         author: editBlog ? editBlog.author : '',
         id: editBlog ? editBlog._id : '',
         public: editBlog ? editBlog.public : '',
+        urlLink: editBlog ? editBlog.urlLink : '',
+        titleUrl: editBlog ? editBlog.titleUrl : '',
         error: err.message,
       },
       currentRoute: '/edit-article',
