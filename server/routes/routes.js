@@ -27,19 +27,11 @@ router.get('', async (req, res) => {
     description: 'Public Articles',
   };
 
+  const token = req.cookies.token;
+
   try {
     let articlePerPage = 5;
     let currentPage = req.query.page || 1;
-
-    // const blogsData = await Post.find()
-    //   .limit(articlePerPage)
-    //   .skip((page - 1) * articlePerPage);
-
-    // const blogsData = await Post.find({ public: true })
-    //   .aggregate([{ $sort: { createdAt: -1 } }])
-    //   .skip((currentPage - 1) * articlePerPage)
-    //   .limit(articlePerPage)
-    //   .exec();
 
     const blogsData = await Post.find({
       public: true,
@@ -67,6 +59,7 @@ router.get('', async (req, res) => {
       prevPage,
       currentPage: parseInt(currentPage),
       currentRoute: '/',
+      token: token ? true : false,
     }); //when accesing this route we visit the 'index' page from 'views' folder
   } catch (err) {
     console.log(err);
@@ -76,6 +69,7 @@ router.get('', async (req, res) => {
 
 // BLOG POST ROUTE, GET SELECTED POST
 router.get('/article/:id', async (req, res) => {
+  const token = req.cookies.token;
   try {
     const selectedBlog = await Post.findById(req.params.id);
 
@@ -88,6 +82,7 @@ router.get('/article/:id', async (req, res) => {
       locals,
       post: selectedBlog,
       currentRoute: '/article',
+      token: token ? true : false,
     });
   } catch (err) {
     console.log(err);
@@ -95,6 +90,7 @@ router.get('/article/:id', async (req, res) => {
 });
 // BLOG POST SEARCH TERM ROUTE, GET SEARCHED  POST
 router.post('/search', async (req, res) => {
+  const token = req.cookies.token;
   try {
     const locals = {
       title: 'Search',
@@ -122,6 +118,7 @@ router.post('/search', async (req, res) => {
       locals,
       data,
       currentRoute: '/search',
+      token: token ? true : false,
     });
   } catch (err) {
     console.log(err);
@@ -130,6 +127,7 @@ router.post('/search', async (req, res) => {
 
 // UPDATE POST ROUTE
 router.post('/article/:id', async (req, res) => {
+  const token = req.cookies.token;
   const locals = {
     title: 'Blogs',
     description: 'Blogs',
@@ -142,6 +140,7 @@ router.post('/article/:id', async (req, res) => {
         title: req.body.title,
         body: req.body.body,
         author: req.body.author,
+        updatedAt: Date.now(),
       });
       res.status(201).send('Post updated successfully');
     } else {
@@ -156,6 +155,7 @@ router.post('/article/:id', async (req, res) => {
 
 // ADD POST ROUTE
 router.put('/article/', async (req, res) => {
+  const token = req.cookies.token;
   const locals = {
     title: 'Blogs',
     description: 'Blogs',
@@ -166,6 +166,7 @@ router.put('/article/', async (req, res) => {
       title: req.body.title,
       body: req.body.body,
       author: req.body.author,
+      user_id: req.user.id,
     });
 
     if (postedBlog) {
@@ -182,6 +183,7 @@ router.put('/article/', async (req, res) => {
 
 // DELETE POST ROUTE
 router.get('blog/:id', (req, res) => {
+  const token = req.cookies.token;
   const locals = {
     title: 'Blogs',
     description: 'Blogs',
@@ -198,17 +200,25 @@ router.get('blog/:id', (req, res) => {
     res.status(400).send('Error:', error);
   }
 
-  res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
+  res.render('index', { locals, token: token ? true : false }); //when accesing this route we visit the 'index' page from 'views' folder
 });
 
 // ABOUT ROUTE
 router.get('/about', (req, res) => {
-  res.render('about', { currentRoute: '/about' });
+  const token = req.cookies.token;
+  res.render('about', {
+    currentRoute: '/about',
+    token: token ? true : false,
+  });
 });
 
 // CONTACT ROUTE
 router.get('/contact', (req, res) => {
-  res.render('contact', { currentRoute: '/contact' });
+  const token = req.cookies.token;
+  res.render('contact', {
+    currentRoute: '/contact',
+    token: token ? true : false,
+  });
 });
 module.exports = router;
 

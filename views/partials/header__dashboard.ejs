@@ -4,7 +4,7 @@
       <a href="/" class="header__logo">Dev-Blog</a>
     </nav>
 
-    <nav>
+    <nav class="nav_links">
       <a href="/" class="<%= isActiveRoute('/', currentRoute) %>">Articles</a>
 
       <a class="<%= isActiveRoute('/about', currentRoute) %>" href="/about"
@@ -20,10 +20,46 @@
       >
     </nav>
 
-    <div class="logout__container">
-      <button type="submit" class="logoutBtn" aria-expanded="false">
-        <a href="/admin/logout"> Log out </a>
-      </button>
+    <!-- HAMBURGER MENU -->
+
+    <div class="hamburger_menu">
+      <img
+        class="close_menu_icon"
+        src="../../img/icon-close.webp"
+        alt="search"
+        class="search-icon"
+      />
+      <nav>
+        <a href="/" class="<%= isActiveRoute('/', currentRoute) %>">Articles</a>
+
+        <a class="<%= isActiveRoute('/about', currentRoute) %>" href="/about"
+          >About</a
+        >
+        <a
+          class="<%= isActiveRoute('/contact', currentRoute) %>"
+          href="/contact"
+          >Contact</a
+        >
+        <a
+          class="<%= isActiveRoute('/admin/dashboard', currentRoute) %>"
+          href="/admin/dashboard"
+          >Admin</a
+        >
+      </nav>
+    </div>
+
+    <div class="flex-container">
+      <img
+        class="hamburger_icon"
+        src="../../img/Hamburger_icon.png"
+        alt="search"
+        class="search-icon"
+      />
+      <div class="logout__container">
+        <button type="submit" class="logoutBtn" aria-expanded="false">
+          <a href="/admin/logout"> Log out </a>
+        </button>
+      </div>
     </div>
   </div>
 </header>

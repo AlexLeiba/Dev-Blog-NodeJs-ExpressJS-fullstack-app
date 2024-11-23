@@ -7,42 +7,44 @@
   <a href="/admin/add-new-article" class="addPostButton">+ Add New</a>
 </div>
 
-<ul class="dashboard-blogs">
-  <% data.forEach(element => { %>
-  <li class="dashboard-blog">
-    <div>
-      <a href="/admin/article/<%= element._id %>">
-        <div>
-          <h3><%= element.title %></h3>
+<section class="articles">
+  <ul class="dashboard-blogs">
+    <% data.forEach(element => { %>
+    <li class="dashboard-blog">
+      <div>
+        <a href="/admin/article/<%= element._id %>">
+          <div>
+            <h3><%= element.title %></h3>
 
-          <p class="dashboard-author"><%= element.author %></p>
-          <p class="created-date-time">
-            Created: <%= element.createdAt.toDateString() %>
+            <p class="dashboard-author"><%= element.author %></p>
+            <p class="created-date-time">
+              Created: <%= element.createdAt.toDateString() %>
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="buttons-label-container">
+        <div>
+          <p class="public-label">
+            <% if(element.public) { %>Public<% } else { %>Private<% } %>
           </p>
         </div>
-      </a>
-    </div>
-    <div class="buttons-label-container">
-      <div>
-        <p class="public-label">
-          <% if(element.public) { %>Public<% } else { %>Private<% } %>
-        </p>
-      </div>
-      <div class="edit-delete-btns">
-        <div class="edit">
-          <a href="/admin/edit-article/<%= element._id %>">Edit</a>
+        <div class="edit-delete-btns">
+          <div class="edit">
+            <a href="/admin/edit-article/<%= element._id %>">Edit</a>
+          </div>
+
+          <form
+            action="/admin/delete-article/<%= element._id %>?_method=DELETE"
+            method="POST"
+          >
+            <input type="submit" value="Delete" class="delete" />
+          </form>
         </div>
-
-        <form
-          action="/admin/delete-article/<%= element._id %>?_method=DELETE"
-          method="POST"
-        >
-          <input type="submit" value="Delete" class="delete" />
-        </form>
       </div>
-    </div>
-  </li>
-  <div class="list-separator"></div>
+    </li>
+    <div class="list-separator"></div>
 
-  <% }) %>
-</ul>
+    <% }) %>
+  </ul>
+</section>

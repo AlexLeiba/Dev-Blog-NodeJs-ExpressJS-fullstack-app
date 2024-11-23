@@ -40,6 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// HAMBURGER MENU
+const hamburgerMenu = document.querySelector('.hamburger_menu');
+const closeMenuIcon = document.querySelector('.close_menu_icon');
+const openMenuIcon = document.querySelector('.hamburger_icon');
+
+openMenuIcon.addEventListener('click', () => {
+  hamburgerMenu.style.display = 'block';
+});
+closeMenuIcon.addEventListener('click', () => {
+  hamburgerMenu.style.display = 'none';
+});
+
 // ADD NEW BLOG
 
 // const addBlogForm = document.getElementById('new-blog-form');
