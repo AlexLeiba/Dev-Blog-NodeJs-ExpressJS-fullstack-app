@@ -148,19 +148,18 @@ router.post('/register', async (req, res) => {
           email,
           password: bcrypt.hashSync(password, 10),
         });
+
         if (registered) {
-          res
-            .status(201)
-            .json({ message: 'Registered successfully' })
-            .redirect('/login');
+          res.status(201).redirect('/admin/login');
         } else {
-          res
-            .status(400)
-            .json({ message: 'Something went wrong please try again' });
+          res.status(400);
+
+          throw new Error('Something went wrong please try again');
         }
       }
     } else {
-      res.status(400).json({ message: 'All fields are required' });
+      res.status(400);
+
       throw new Error('All fields are required');
     }
   } catch (err) {

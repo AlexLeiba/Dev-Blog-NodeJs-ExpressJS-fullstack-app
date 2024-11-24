@@ -25,31 +25,29 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   //
 
-  const showToastBtn = document.querySelector('.auth-form');
+  // const showToastBtn = document.querySelector('.auth-form');
 
-  showToastBtn.addEventListener('click', async () => {
-    const message = 'Blog deleted successfully';
-    const timeout = 3000;
+  // showToastBtn.addEventListener('click', async () => {
+  //   const message = 'Blog deleted successfully';
+  //   const timeout = 3000;
 
-    const toast = document.querySelector(`.toast`);
-    toast.classList.add('open');
-    toast.innerHTML = message;
-    setTimeout(() => {
-      toast.classList.add('toast');
-    }, timeout);
+  //   const toast = document.querySelector(`.toast`);
+  //   toast.classList.add('open');
+  //   toast.innerHTML = message;
+  //   setTimeout(() => {
+  //     toast.classList.add('toast');
+  //   }, timeout);
+  // });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const hamburgerButton = document.querySelector('.hamburger');
+  const hamburgerMenu = document.querySelector('.hamburger_menu');
+
+  hamburgerButton.addEventListener('click', () => {
+    hamburgerButton.classList.toggle('active');
+    hamburgerMenu.classList.toggle('hamburger_menu_open');
   });
-});
-
-// HAMBURGER MENU
-const hamburgerMenu = document.querySelector('.hamburger_menu');
-const closeMenuIcon = document.querySelector('.close_menu_icon');
-const openMenuIcon = document.querySelector('.hamburger_icon');
-
-openMenuIcon.addEventListener('click', () => {
-  hamburgerMenu.style.display = 'block';
-});
-closeMenuIcon.addEventListener('click', () => {
-  hamburgerMenu.style.display = 'none';
 });
 
 // ADD NEW BLOG

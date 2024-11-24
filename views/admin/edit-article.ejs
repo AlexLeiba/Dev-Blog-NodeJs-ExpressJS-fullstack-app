@@ -59,25 +59,31 @@
 
     <h3>Optional:</h3>
 
-    <label for="urlLink">Url:</label>
-    <input
-      placeholder="type here"
-      type="text"
-      name="urlLink"
-      id="urlLink"
-      required
-      value="<%= data.urlLink %>"
-    />
+    <div class="flex-admin-form">
+      <div>
+        <label for="urlLink">Url:</label>
+        <input
+          placeholder="type here"
+          type="text"
+          name="urlLink"
+          id="urlLink"
+          required
+          value="<%= data.urlLink %>"
+        />
+      </div>
 
-    <label for="username">Title url:</label>
-    <input
-      placeholder="type here"
-      type="text"
-      name="titleUrl"
-      id="titleUrl"
-      required
-      value="<%= data.titleUrl %>"
-    />
+      <div>
+        <label for="username">Title url:</label>
+        <input
+          placeholder="type here"
+          type="text"
+          name="titleUrl"
+          id="titleUrl"
+          required
+          value="<%= data.titleUrl %>"
+        />
+      </div>
+    </div>
 
     <% if(error) { %>
     <p class="error-message"><%= error %></p>

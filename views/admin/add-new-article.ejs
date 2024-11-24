@@ -26,7 +26,7 @@
 
     <div class="flex-admin-form">
       <div>
-        <label for="username">Title</label>
+        <label for="username">Title *</label>
         <input
           placeholder="type here"
           type="text"
@@ -38,7 +38,7 @@
       </div>
 
       <div>
-        <label for="author">Author</label>
+        <label for="author">Author *</label>
         <input
           placeholder="type here"
           type="text"
@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <label for="body">Body</label>
+    <label for="body">Description *</label>
     <textarea
       placeholder="type here"
       name="body"
@@ -61,24 +61,29 @@
 
     <h3>Optional:</h3>
 
-    <label for="urlLink">Url:</label>
-    <input
-      placeholder="type here"
-      type="text"
-      name="urlLink"
-      id="urlLink"
-      value=""
-    />
+    <div class="flex-admin-form">
+      <div>
+        <label for="urlLink">Url:</label>
+        <input
+          placeholder="type here"
+          type="text"
+          name="urlLink"
+          id="urlLink"
+          value=""
+        />
+      </div>
 
-    <label for="username">Title url:</label>
-    <input
-      type="text"
-      name="titleUrl"
-      id="titleUrl"
-      value=""
-      placeholder="type here"
-    />
-
+      <div>
+        <label for="username">Title url:</label>
+        <input
+          type="text"
+          name="titleUrl"
+          id="titleUrl"
+          value=""
+          placeholder="type here"
+        />
+      </div>
+    </div>
     <% if(error) { %>
     <p class="error-message"><%= error %></p>
     <% }%>
