@@ -2,17 +2,27 @@
   <h1 class="author__heading">Hi there :)</h1>
 
   <p class="author__body">
-    { I'm a front-end developer and this is my simple blog website.
+    { I'm a front-end developer and this is my simple blog website.}
   </p>
 </div>
 
-<img src="/img/web-dev-bg.jpeg" alt="hero-image" class="hero-image" />
+<img
+  style="filter: opacity(0.8)"
+  src="/img/web-dev-bg.jpeg"
+  alt="hero-image"
+  class="hero-image"
+/>
 
 <section class="articles">
   <h2 class="articles__heading">Latest Articles</h2>
 
   <ul class="article-ul">
-    <% blogsData?.forEach(post => { %>
+    <% if (blogsData.length === 0) { %>
+    <div class="no-search-results-found">
+      <p>No articles found</p>
+    </div>
+
+    <% } %> <% blogsData?.forEach(post => { %>
     <div>
       <li>
         <a href="/article/<%= post._id %>">

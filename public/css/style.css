@@ -51,12 +51,13 @@ body {
   );
 
   /* background-image: url('/img/img-noise-361x370.png'); */
-  background-repeat: no-repeat;
+
   background-position: center;
   background-size: cover;
   margin: 0;
   box-sizing: border-box;
   overflow-y: auto;
+  width: 100vw;
 }
 
 /* CONTAINER */
@@ -70,7 +71,7 @@ body {
   margin: 0 auto;
   padding: 0 2rem;
   flex-grow: 1;
-  padding-top: 72px;
+  padding-top: 100px;
   padding-bottom: 72px;
 }
 
@@ -173,6 +174,7 @@ textarea {
   color: var(--white);
   outline: none;
   box-shadow: none;
+  box-sizing: border-box;
 }
 
 /* Reset styles for autofilled inputs */
@@ -448,6 +450,11 @@ input[type='search'] {
   justify-content: space-between;
   align-items: center;
 }
+.dashboard-title div {
+  @media (max-width: 768px) {
+    width: 60%;
+  }
+}
 
 .dashboard-blogs {
   padding: 0;
@@ -550,6 +557,7 @@ input[type='search'] {
 
 .dashboard-blog {
   padding: 0;
+  width: 100%;
 }
 
 .addPostButton {
@@ -839,3 +847,8 @@ input[type='search'] {
 }
 
 /* END HAMBURGER */
+
+.article-body {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

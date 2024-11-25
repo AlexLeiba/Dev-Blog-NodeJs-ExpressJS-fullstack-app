@@ -1,15 +1,22 @@
 <div class="dashboard-title">
-  <% if(error) { %>
-  <p class="error-message"><%= error %></p>
-  <% }%>
-  <h2>Public and Private articles</h2>
+  <div>
+    <h2>Public and Private articles</h2>
+  </div>
 
   <a href="/admin/add-new-article" class="addPostButton">+ Add New</a>
 </div>
+<% if(error) { %>
+<p class="error-message"><%= error %></p>
+<% }%>
 
 <section class="articles">
   <ul class="dashboard-blogs">
-    <% data.forEach(element => { %>
+    <% if (data.length === 0) { %>
+    <div class="no-search-results-found">
+      <p>No articles found</p>
+    </div>
+
+    <% } %> <% data.forEach(element => { %>
     <li class="dashboard-blog">
       <div>
         <a href="/admin/article/<%= element._id %>">
