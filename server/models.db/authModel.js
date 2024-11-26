@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const authSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: false,
-    unique: true,
+    required: true,
+    unique: false,
   },
   email: {
     type: String,
