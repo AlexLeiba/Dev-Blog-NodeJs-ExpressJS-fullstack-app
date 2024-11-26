@@ -1,17 +1,29 @@
 <div class="dashboard-blog">
-  <h2><%= post.title %></h2>
+  <div class="article-posted-container">
+    <div>
+      <h2><%= post.title %></h2>
+      <p class="article-posted-info">Author: <%= post.author %></p>
+      <p class="article-posted-info">
+        Posted: <%= post.createdAt.toDateString() %>
+      </p>
+
+      <p class="article-posted-info">
+        Last update: <%= post.updatedAt.toDateString() %>
+      </p>
+    </div>
+  </div>
+
+  <div class="article-separator"></div>
 
   <p class="article-body"><%- post.body %></p>
 
-  <p><%= post.author %></p>
-
-  <p>Created at: <%= post.createdAt.toDateString() %></p>
-
-  <p>Updated at: <%= post.updatedAt.toDateString() %></p>
-
-  <div>
+  <% if (post.urlLink && post.titleUrl) { %>
+  <div class="link-spacer">
     <a class="urlLink" href="<%= post.urlLink %>" target="_blank"
-      >Url: <%= post.titleUrl %></a
+      ><%= post.titleUrl %></a
     >
   </div>
+  <div class="article-separator"></div>
+
+  <% } %>
 </div>
