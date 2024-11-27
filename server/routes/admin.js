@@ -288,6 +288,7 @@ router.post('/add-new-article', authMiddleware, async (req, res) => {
     title: 'Add new article',
     description: 'Add new article',
   };
+
   try {
     const { title, body, author, public, urlLink, titleUrl } = req.body;
 
@@ -302,15 +303,7 @@ router.post('/add-new-article', authMiddleware, async (req, res) => {
     });
     if (selectedBlog) {
       res.redirect('/admin/dashboard');
-      res.status(201).json({ message: 'Blog added successfully' });
     }
-
-    res.render('admin/add-new-article', {
-      locals,
-      layout: dashboardLayout,
-      error: '',
-      currentRoute: '/add-new-article',
-    });
   } catch (err) {
     console.log(err);
     res.render('admin/add-new-article', {
@@ -327,10 +320,7 @@ router.post('/delete-article/:id', authMiddleware, async (req, res) => {
   // const selectedBlog = await Post.findById(req.params.id);
   try {
     if (deletedBlog) {
-      res
-        .redirect('/admin/dashboard')
-        .status(200)
-        .send('Blog deleted successfully');
+      res.redirect('/admin/dashboard');
     } else {
       throw new Error('Unauthorized');
     }
@@ -410,7 +400,6 @@ router.post('/edit-article/:id', authMiddleware, async (req, res) => {
       });
 
       res.redirect('/admin/dashboard');
-      res.status(201).send('Blog updated successfully');
     } else {
       throw new Error('Unauthorized');
     }
