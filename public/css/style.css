@@ -833,6 +833,9 @@ input[type='search'] {
     top: -100vh;
     right: 0;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(
+      10px
+    ); /* Vendor prefix for better iOS support */
     width: 100%;
 
     text-align: center;
