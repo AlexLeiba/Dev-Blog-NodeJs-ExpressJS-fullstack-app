@@ -2,14 +2,14 @@ const express = require('express');
 
 const router = express.Router(); // Routes
 const Post = require('../models.db/models');
+const AuthModel = require('../models.db/authModel');
+
 const loginLayout = '../views/layout/loginLayout';
 const registerLayout = '../views/layout/registerLayout';
 const dashboardLayout = '../views/layout/dashboardLayout';
 
-const AuthModel = require('../models.db/authModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const e = require('express');
 
 // CHECK IF USER IS LOGGED IN
 // In order to make pages secure, we can pass this fn to all the requests we want to be hidden if user isn't logged in.

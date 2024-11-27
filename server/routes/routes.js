@@ -3,23 +3,6 @@ const express = require('express');
 const router = express.Router(); // Routes
 const Post = require('../models.db/models');
 
-// HOME ROUTE, GET ALL ARTICLES
-// router.get('/', async (req, res) => {
-//   const locals = {
-//     title: 'Blogs',
-//     description: 'Blogs',
-//   };
-
-//   try {
-//     const blogsData = await Post.find(); //returns all data from the database i mentioned in dbConnection.js
-
-//     res.render('index', { locals, blogsData }); //when accesing this route we visit the 'index' page from 'views' folder
-//     console.log('\n\n🚀 ~ =>>>>>>>> blogsData here:', blogsData);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 // HOME ROUTE, GET ARTICLES PAGINATED
 router.get('', async (req, res) => {
   const locals = {
@@ -221,30 +204,3 @@ router.get('/contact', (req, res) => {
   });
 });
 module.exports = router;
-
-// async function insertPosts() {
-//   Post.insertMany([
-//     {
-//       title: 'Post 1',
-//       body: 'Post 1 description',
-//       author: 'Author 1',
-//     },
-//     {
-//       title: 'Post 2',
-//       body: 'Post 2 description',
-//       author: 'Author 2',
-//     },
-//     {
-//       title: 'Post 3',
-//       body: 'Post 3 description',
-//       author: 'Author 3',
-//     },
-//     {
-//       title: 'Post 4',
-//       body: 'Post 4 description',
-//       author: 'Author 4',
-//     },
-//   ]);
-// }
-
-// insertPosts();
