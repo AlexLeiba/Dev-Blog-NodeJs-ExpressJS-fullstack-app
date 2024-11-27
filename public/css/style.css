@@ -918,3 +918,11 @@ section ul li a {
 #about-app {
   color: var(--white);
 }
+
+.dashboard-blogs h3 {
+  line-height: 1.5rem;
+}
+
+.articles h4 {
+  line-height: 1.5rem;
+}
