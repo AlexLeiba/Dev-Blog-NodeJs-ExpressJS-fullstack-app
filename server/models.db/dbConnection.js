@@ -3,10 +3,7 @@ const connectDB = async () => {
   try {
     mongoose.set('strictQuery', true);
 
-    const mongoDB = mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const mongoDB = mongoose.connect(process.env.MONGODB_URI);
 
     console.log('\n\n MongoDB host:=>>>', (await mongoDB).connection.host);
   } catch (err) {
