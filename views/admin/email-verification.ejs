@@ -1,0 +1,37 @@
+<div class="verification-email-container">
+  <h1>Verification email</h1>
+  <br />
+  <br />
+  <!-- ERROR MESSAGE -->
+  <% if(error) { %>
+  <img
+    class="verification-email"
+    src="/img/e-failed.png"
+    alt="verification failed"
+  />
+  <h3>Verification failed!</h3>
+
+  <h3 class="error-message"><%= error %></h3>
+  <!-- REGISTER BUTTON -->
+  <a href="/admin/register">
+    <button class="logoutBtn">Register</button>
+  </a>
+
+  <!-- SUCCESS MESSAGE -->
+  <% }%> <% if(message) { %>
+
+  <img
+    class="verification-email"
+    src="/img/e-verified.png"
+    alt="verification failed"
+  />
+
+  <h3>Congratulations!</h3>
+  <h3 class="success-message"><%= message %></h3>
+
+  <!-- LOGIN BUTTON -->
+  <a href="/admin/login">
+    <button class="logoutBtn">Log in</button>
+  </a>
+  <% }%>
+</div>

@@ -53,6 +53,9 @@ app.use('/', require('./server/routes/routes'));
 // AUTH ROUTES
 app.use('/admin', require('./server/routes/admin'));
 
+// VERIFY EMAIL ROUTES
+app.use('/admin', require('./server/routes/verificationEmail'));
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

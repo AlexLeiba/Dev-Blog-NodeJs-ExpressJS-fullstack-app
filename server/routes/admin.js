@@ -1,36 +1,114 @@
 const express = require('express');
 
-const router = express.Router(); // Routes
+// router
+const router = express.Router();
+
+// mongodb models
 const Post = require('../models.db/models');
+const AuthVerificationModel = require('../models.db/authVerificationModel');
 const AuthModel = require('../models.db/authModel');
 
+// layouts
 const loginLayout = '../views/layout/loginLayout';
 const registerLayout = '../views/layout/registerLayout';
 const dashboardLayout = '../views/layout/dashboardLayout';
 
+// password handler
 const bcrypt = require('bcrypt');
+
+// token handler
 const jwt = require('jsonwebtoken');
 
-// CHECK IF USER IS LOGGED IN
-// In order to make pages secure, we can pass this fn to all the requests we want to be hidden if user isn't logged in.
-const authMiddleware = async (req, res, next) => {
-  const token = req.cookies.token;
+const authMiddleware = require('./authMiddleware');
 
-  if (token) {
-    try {
-      // CHECK IF THIS TOKEN IS USING THE SAME SECRET KEY THAT WE ARE USING
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
-      next();
-    } catch (err) {
-      res.status(401);
-      res.redirect('/admin/login');
+const sendVerificationEmail = require('./verificationEmail');
+
+// VERIFICATION EMAIL AND RENDER PAGE
+// user will click on this link to verify his email, will redirect him to this address, then we will check if the unique string matches with the one the user send on register
+router.get('/email-verification/:id/:uniqueString', async (req, res) => {
+  const locals = {
+    title: 'Verify email',
+    description: 'Verify email',
+  };
+
+  //the id was passed from AuthModel _id
+  const { id, uniqueString } = req.params;
+
+  try {
+    const authenticatedUser = await AuthVerificationModel.findOne({
+      userId: id,
+    });
+
+    if (!authenticatedUser) {
+      throw new Error(
+        'The verification has expired or the link is invalid, please try again'
+      );
     }
-  } else {
-    res.status(401);
-    res.redirect('/admin/login');
+
+    if (authenticatedUser) {
+      const { expiresAt, userId: dbUserID } = authenticatedUser;
+      // const hashedUniqueString = authenticatedUser.uniqueString;
+      console.log(
+        'expiresAt \n\n\n',
+        expiresAt,
+        new Date(Date.now() + 60000).getTime(),
+        Date.now()
+      );
+
+      const compareUniqueStrings = dbUserID === id;
+
+      // COMPARE THE TOKEN WITH THE HASHED TOKEN
+      if (!compareUniqueStrings) {
+        // res.redirect('/admin/verification-error');
+        throw new Error('The user id is invalid');
+      }
+
+      // CHECK IF THE TOKEN IS VALID
+      if (Date.now() > expiresAt) {
+        console.log('dbUserID \n\n\n', dbUserID);
+        // DELETE THE USER AUTH AND CLEAR THE USER PROFILE
+        AuthVerificationModel.findByIdAndDelete(dbUserID); //delete the user auth because he again has to send verificatione mail with new token
+        const deletedUser = await AuthModel.findByIdAndDelete(dbUserID); // clear the user profile, in order to be able to register again
+        console.log('deletedUser \n\n\n', deletedUser);
+        // res.redirect('/admin/verification-error');
+        throw new Error(
+          'The verification token has expired :(, Please try to register again in order to get a new token'
+        );
+      }
+
+      // IF WE HAVE NOT ERRORS, THEN WE CAN UPDATE THE USER PROFILE
+      // update user verified to true
+      const updatedUser = await AuthModel.findByIdAndUpdate(dbUserID, {
+        verified: true,
+      });
+
+      if (updatedUser) {
+        res.render('admin/email-verification', {
+          locals,
+          layout: loginLayout,
+          error: '',
+          currentRoute: '/email-verification',
+          message:
+            'Verification was successful, now you can log in into your account!',
+        }); //when accesing this route we visit the 'admin' page from 'views' folder
+      } else {
+        throw new Error('Something went wrong while updating the user');
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.render('admin/email-verification', {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+      currentRoute: '/email-verification',
+      message: '',
+    });
+    //when accesing this route we visit the 'admin' page from 'views' folder
   }
-};
+});
+
+////
 
 // LOGIN AUTH MAIN PAGE GET AND RENDER PAGE
 router.get('/login', async (req, res) => {
@@ -71,25 +149,29 @@ router.post('/login', async (req, res) => {
       const comparePasswords = bcrypt.compareSync(password, userDB.password);
 
       if (userDB && comparePasswords) {
-        const token = jwt.sign(
-          {
-            email: userDB.email,
-            password: userDB.password,
-            username: userDB.username,
-            id: userDB._id,
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: '24h' }
-        );
+        if (userDB.verified) {
+          const token = jwt.sign(
+            {
+              email: userDB.email,
+              password: userDB.password,
+              username: userDB.username,
+              id: userDB._id,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+          );
 
-        // SENT TOKEN TO COOKIE
-        res.cookie('token', token, { httpOnly: true });
+          // SENT TOKEN TO COOKIE
+          res.cookie('token', token, { httpOnly: true });
 
-        // REDIRECT TO DASHBOARD
+          // REDIRECT TO DASHBOARD
 
-        setTimeout(() => {
-          res.redirect('/admin/dashboard');
-        }, 1000);
+          setTimeout(() => {
+            res.redirect('/admin/dashboard');
+          }, 1000);
+        } else {
+          throw new Error('Your account is not verified yet');
+        }
       } else {
         throw new Error('Please enter a valid email and password');
       }
@@ -122,9 +204,17 @@ router.get('/register', async (req, res) => {
       layout: registerLayout,
       error: '',
       currentRoute: '/register',
+      message: '',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
     console.log(err);
+    res.render('admin/register', {
+      locals,
+      layout: registerLayout,
+      error: '',
+      currentRoute: '/register',
+      message: '',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
 
@@ -134,6 +224,7 @@ router.post('/register', async (req, res) => {
     title: 'Register',
     description: 'Register',
   };
+
   try {
     const { username, password, email } = req.body;
 
@@ -147,10 +238,21 @@ router.post('/register', async (req, res) => {
           username,
           email,
           password: bcrypt.hashSync(password, 10),
+          verified: false, //verified email
         });
 
         if (registered) {
-          res.status(201).redirect('/admin/login');
+          sendVerificationEmail(req.body, registered._id, res);
+          // then rerender register page with message that verification email has been sent
+          res.render('admin/register', {
+            locals,
+            layout: registerLayout,
+            error: '',
+            currentRoute: '/register',
+            message: 'Verification email has been sent to your email account',
+          });
+
+          // res.status(201).redirect('/admin/login');
         } else {
           res.status(400);
 
@@ -170,6 +272,32 @@ router.post('/register', async (req, res) => {
       layout: registerLayout,
       error: err.message,
       currentRoute: '/register',
+      message: '',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
+  }
+});
+
+// FORGOT PASSWORD AND RENDER PAGE
+router.get('/forgot-password', async (req, res) => {
+  const locals = {
+    title: 'Forgot password',
+    description: 'Forgot password',
+  };
+
+  try {
+    res.render('admin/forgot-password', {
+      locals,
+      layout: loginLayout,
+      error: '',
+      currentRoute: '/forgot-password',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
+  } catch (err) {
+    console.log(err);
+    res.render('admin/forgot-password', {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+      currentRoute: '/forgot-password',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
