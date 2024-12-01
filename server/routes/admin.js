@@ -19,9 +19,13 @@ const bcrypt = require('bcrypt');
 // token handler
 const jwt = require('jsonwebtoken');
 
+const uuidv4 = require('uuid').v4;
+
 const authMiddleware = require('./authMiddleware');
 
 const sendVerificationEmail = require('./verificationEmail');
+
+const forgotPassword = require('./forgotPassword');
 
 // VERIFICATION EMAIL AND RENDER PAGE
 // user will click on this link to verify his email, will redirect him to this address, then we will check if the unique string matches with the one the user send on register
@@ -32,7 +36,7 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
   };
 
   //the id was passed from AuthModel _id
-  const { id, uniqueString } = req.params;
+  const { id } = req.params;
 
   try {
     const authenticatedUser = await AuthVerificationModel.findOne({
@@ -40,40 +44,40 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
     });
 
     if (!authenticatedUser) {
-      throw new Error(
-        'The verification has expired or the link is invalid, please try again'
-      );
+      throw new Error('The user id is invalid, please try again');
     }
 
     if (authenticatedUser) {
       const { expiresAt, userId: dbUserID } = authenticatedUser;
       // const hashedUniqueString = authenticatedUser.uniqueString;
-      console.log(
-        'expiresAt \n\n\n',
-        expiresAt,
-        new Date(Date.now() + 60000).getTime(),
-        Date.now()
-      );
 
       const compareUniqueStrings = dbUserID === id;
 
       // COMPARE THE TOKEN WITH THE HASHED TOKEN
       if (!compareUniqueStrings) {
         // res.redirect('/admin/verification-error');
-        throw new Error('The user id is invalid');
+        throw new Error('The user id is invalid, please try again');
       }
 
       // CHECK IF THE TOKEN IS VALID
       if (Date.now() > expiresAt) {
-        console.log('dbUserID \n\n\n', dbUserID);
         // DELETE THE USER AUTH AND CLEAR THE USER PROFILE
-        AuthVerificationModel.findByIdAndDelete(dbUserID); //delete the user auth because he again has to send verificatione mail with new token
-        const deletedUser = await AuthModel.findByIdAndDelete(dbUserID); // clear the user profile, in order to be able to register again
-        console.log('deletedUser \n\n\n', deletedUser);
+        const deleteAuthUserModel = await AuthModel.findByIdAndDelete(dbUserID); // clear the user profile, in order to be able to register again
+        const deleteAuthVerificationModel =
+          await AuthVerificationModel.findOneAndDelete({
+            userId: dbUserID,
+          }); //delete the user auth because he again has to send verificatione mail with new token
+
         // res.redirect('/admin/verification-error');
-        throw new Error(
-          'The verification token has expired :(, Please try to register again in order to get a new token'
-        );
+        if (!deleteAuthUserModel || !deleteAuthVerificationModel) {
+          throw new Error('Something went wrong deleting the user data');
+        }
+
+        if (deleteAuthUserModel && deleteAuthVerificationModel) {
+          throw new Error(
+            'The verification token has expired :( Please try to register again in order to get a new token'
+          );
+        }
       }
 
       // IF WE HAVE NOT ERRORS, THEN WE CAN UPDATE THE USER PROFILE
@@ -81,8 +85,13 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
       const updatedUser = await AuthModel.findByIdAndUpdate(dbUserID, {
         verified: true,
       });
+      const updatedUserVerification =
+        await AuthVerificationModel.findOneAndUpdate({
+          userId: dbUserID,
+          verified: true,
+        });
 
-      if (updatedUser) {
+      if (updatedUser && updatedUserVerification) {
         res.render('admin/email-verification', {
           locals,
           layout: loginLayout,
@@ -92,7 +101,7 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
             'Verification was successful, now you can log in into your account!',
         }); //when accesing this route we visit the 'admin' page from 'views' folder
       } else {
-        throw new Error('Something went wrong while updating the user');
+        throw new Error('Something went wrong while updating the user data');
       }
     }
   } catch (err) {
@@ -273,31 +282,6 @@ router.post('/register', async (req, res) => {
       error: err.message,
       currentRoute: '/register',
       message: '',
-    }); //when accesing this route we visit the 'admin' page from 'views' folder
-  }
-});
-
-// FORGOT PASSWORD AND RENDER PAGE
-router.get('/forgot-password', async (req, res) => {
-  const locals = {
-    title: 'Forgot password',
-    description: 'Forgot password',
-  };
-
-  try {
-    res.render('admin/forgot-password', {
-      locals,
-      layout: loginLayout,
-      error: '',
-      currentRoute: '/forgot-password',
-    }); //when accesing this route we visit the 'admin' page from 'views' folder
-  } catch (err) {
-    console.log(err);
-    res.render('admin/forgot-password', {
-      locals,
-      layout: loginLayout,
-      error: err.message,
-      currentRoute: '/forgot-password',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
@@ -641,30 +625,205 @@ router.get('/contact', (req, res) => {
 });
 module.exports = router;
 
-// ADD POSTS
-// async function insertPosts() {
-//   Post.insertMany([
-//     {
-//       title: 'Post 1 Post 1 Post 1',
-//       body: 'Post 1 description admin Post 1 description admin',
-//       author: 'Author 1',
-//     },
-//     {
-//       title: 'Post 2',
-//       body: 'Post 2 description Post 1 description admin',
-//       author: 'Author 2',
-//     },
-//     {
-//       title: 'Post 3 Post 1 Post 1',
-//       body: 'Post 3 description Post 1 Post 1 Post 1 Post 1Post 1Post 1Post 1',
-//       author: 'Author 3',
-//     },
-//     {
-//       title: 'Post 4',
-//       body: 'Post 4 description Post 1 description admin Post 1 description admin Post 1 description admin',
-//       author: 'Author 4',
-//     },
-//   ]);
-// }
+// RESET PASSWORD
+// FORGOT PASSWORD AND RENDER PAGE
+router.get('/forgot-password', async (req, res) => {
+  const locals = {
+    title: 'Forgot password',
+    description: 'Forgot password',
+  };
 
-// insertPosts();
+  try {
+    res.render('admin/forgot-password', {
+      locals,
+      layout: loginLayout,
+      error: '',
+      currentRoute: '/forgot-password',
+      message: '',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
+  } catch (err) {
+    console.log(err);
+    res.render('admin/forgot-password', {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+      currentRoute: '/forgot-password',
+      message: '',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
+  }
+});
+
+router.post('/forgot-password', async (req, res) => {
+  const locals = {
+    title: 'Login',
+    description: 'Login',
+  };
+
+  const { email } = req.body;
+  try {
+    if (email) {
+      const userDB = await AuthModel.findOne({ email: email });
+
+      if (userDB) {
+        const uniqueString = uuidv4() + userDB._id;
+
+        // unique string hashed
+        const updatedUserVerification =
+          await AuthVerificationModel.findOneAndUpdate({
+            userId: userDB._id,
+            uniqueString: uniqueString,
+          });
+
+        if (!updatedUserVerification)
+          throw new Error(
+            'Something went wrong updating the user verification'
+          );
+
+        forgotPassword(req.body, userDB._id, uniqueString, res);
+
+        res.render('admin/forgot-password', {
+          locals,
+          layout: loginLayout,
+          error: '',
+          currentRoute: '/forgot-password',
+          message: 'Reset password email has been sent to your email account!',
+        }); //when accesing this route we visit the 'admin' page from 'views' folder
+
+        // REDIRECT TO DASHBOARD
+      } else {
+        throw new Error('The email does not exist');
+      }
+    } else {
+      throw new Error('Please enter a valid email and password');
+    }
+  } catch (err) {
+    console.log(err);
+    res.render('admin/forgot-password', {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+      currentRoute: '/forgot-password',
+      message: '',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
+  }
+});
+
+// RESET PASSWORD
+
+// VERIFICATION EMAIL AND RENDER PAGE
+// user will click on this link to verify his email, will redirect him to this address, then we will check if the unique string matches with the one the user send on register
+router.get('/check-reset-password/:id/:uniqueString', async (req, res) => {
+  const locals = {
+    title: 'Verify email',
+    description: 'Verify email',
+  };
+
+  //the id was passed from AuthModel _id
+  const { id, uniqueString } = req.params;
+
+  try {
+    const authenticatedUser = await AuthVerificationModel.findOne({
+      userId: id,
+    });
+
+    if (!authenticatedUser) {
+      throw new Error(
+        'The verification has expired or the link is invalid, please try again'
+      );
+    }
+
+    if (authenticatedUser) {
+      const {
+        expiresAt, //verify if link hasn't expired
+        userId: dbUserID,
+        uniqueString: dbUniqueString,
+      } = authenticatedUser;
+
+      const compareUniqueStrings = dbUniqueString === uniqueString;
+
+      // COMPARE THE TOKEN WITH THE HASHED TOKEN
+      if (!compareUniqueStrings) {
+        // res.redirect('/admin/verification-error');
+        throw new Error('The user id is invalid');
+      }
+
+      // CHECK IF THE TOKEN IS VALID
+      if (Date.now() > expiresAt) {
+        throw new Error(
+          'The  token has expired :(, Please try to reset password again in order to get a new token'
+        );
+      }
+
+      // IF WE HAVE NO ERRORS RENDER THE PAGE TO RESET THE PASSWORD
+      res.render(`admin/check-reset-password`, {
+        locals,
+        layout: loginLayout,
+        error: '',
+        currentRoute: '/reset-password',
+        message: '',
+        userId: id,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.render(`admin/check-reset-password`, {
+      locals,
+      layout: loginLayout,
+      error: err.message,
+      currentRoute: '/check-reset-password',
+      message: '',
+      userId: id,
+    });
+  }
+});
+
+router.post('/check-reset-password/:id', async (req, res) => {
+  const locals = {
+    title: 'Verify email',
+    description: 'Verify email',
+  };
+
+  //the id was passed from AuthModel _id
+  const { id } = req.params;
+  const { password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  try {
+    if (!password) {
+      throw new Error('Please enter a valid password');
+    }
+    const authUser = await AuthModel.findByIdAndUpdate(id, {
+      password: hashedPassword,
+    });
+
+    if (!authUser) {
+      throw new Error(
+        'The verification has expired or the link is invalid, please try again'
+      );
+    }
+
+    // IF WE HAVE NOT ERRORS, THEN WE CAN UPDATE THE USER PROFILE
+    // update user verified to true
+
+    res.render(`admin/check-reset-password`, {
+      userId: id,
+      locals,
+      layout: loginLayout,
+      error: '',
+      currentRoute: '/check-reset-password',
+      message:
+        'You resetted password successfully, now you can log in into your account!',
+    }); //when accesing this route we visit the 'admin' page from 'views' folder
+  } catch (err) {
+    console.log(err);
+    res.render('admin/check-reset-password', {
+      userId: id,
+      locals,
+      layout: loginLayout,
+      error: err.message,
+      currentRoute: '/check-reset-password',
+      message: '',
+    });
+    //when accesing this route we visit the 'admin' page from 'views' folder
+  }
+});

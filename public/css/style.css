@@ -427,6 +427,17 @@ input[type='search'] {
   align-items: center;
   column-gap: 0.5rem;
 }
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+  flex-direction: column;
+  width: 100%;
+}
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
 
 /* SEARCH BAR END */
 

@@ -4,9 +4,6 @@ const AuthVerificationModel = require('../models.db/authVerificationModel');
 // email handler
 const nodemailer = require('nodemailer');
 
-// unique id generator
-const { v4: uuidv4 } = require('uuid');
-
 // password handler
 const bcrypt = require('bcrypt');
 
@@ -21,30 +18,28 @@ const transporter = nodemailer.createTransport({
 });
 
 // SEND VERIFICATION EMAIL
-function sendVerificationEmail({ email, username }, _id, res) {
+function forgotPassword({ email, username }, _id, hashedUniqueString, res) {
   // const localBaseUrl = 'http://localhost:5001/';
   const productionBaseUrl = 'https://full-stack-blog-37mi.onrender.com/';
-  const uniqueString = uuidv4() + _id;
 
   // HTML
   const mailOptions = {
     from: process.env.AUTH_EMAIL,
     to: email,
-    subject: 'Verify your email',
-    text: `Hello ${email}, please verify your email by clicking the link below`,
-    html: `<h4>Hello ${username}</h4> <h2>Welcome to Dev-Blog :)</h2> <h3>please verify your email by clicking the link below</h3>  
+    subject: 'Reset password',
+    text: `Hello ${email}, Reset your password by clicking the link below`,
+    html: `<h4>Hello ${username}</h4> <h2>Welcome back to Dev-Blog :)</h2> <h3>Reset your password by clicking the link below</h3>  
       <a href="${
         productionBaseUrl +
-        'admin/email-verification/' +
+        'admin/check-reset-password/' +
         _id +
         '/' +
-        uniqueString
+        hashedUniqueString
       }">Click here to verify your email</a>
        <h4>This link will expire in 6 hours</h4>`,
   };
 
   // hash the unique string
-  const hashedUniqueString = bcrypt.hashSync(uniqueString, 10);
 
   if (!hashedUniqueString) {
     res.status(400).send('Error: Something went wrong');
@@ -52,11 +47,11 @@ function sendVerificationEmail({ email, username }, _id, res) {
   }
 
   // create a new verification user
-  AuthVerificationModel.create({
+  AuthVerificationModel.findOneAndUpdate({
     userId: _id, //AuthModel _id === AuthVerificationModel userId
     uniqueString: hashedUniqueString,
     createdAt: Date.now(),
-    expiresAt: new Date(Date.now() + 21600000).getTime(), //6 hours 21600000 milliseconds
+    expiresAt: new Date(Date.now() + 60000).getTime(), //6 hours 21600000 milliseconds
   }).then((newVerification) => {
     if (!newVerification) {
       res.status(400);
@@ -66,11 +61,11 @@ function sendVerificationEmail({ email, username }, _id, res) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      throw new Error('Something went wrong :(, verification email failed!');
+      throw new Error('Something went wrong :( please try again');
     } else {
       res.status(201).send('Email sent successfully!');
     }
   });
 }
 
-module.exports = sendVerificationEmail;
+module.exports = forgotPassword;
