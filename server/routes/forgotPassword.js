@@ -51,7 +51,7 @@ function forgotPassword({ email, username }, _id, hashedUniqueString, res) {
     userId: _id, //AuthModel _id === AuthVerificationModel userId
     uniqueString: hashedUniqueString,
     createdAt: Date.now(),
-    expiresAt: new Date(Date.now() + 60000).getTime(), //6 hours 21600000 milliseconds
+    expiresAt: new Date(Date.now() + 21600000).getTime(), //6 hours 21600000 milliseconds
   }).then((newVerification) => {
     if (!newVerification) {
       res.status(400);
