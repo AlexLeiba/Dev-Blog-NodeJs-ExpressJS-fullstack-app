@@ -28,32 +28,36 @@ function forgotPassword({ email, username }, _id, hashedUniqueString, res) {
       <a href="${
         baseUrl + 'admin/check-reset-password/' + _id + '/' + hashedUniqueString
       }">Click here to verify your email</a>
-       <h4>This link will expire in 6 hours</h4>`,
+       <h4>This link will expire in 5 minutes</h4>`,
   };
 
   // hash the unique string
 
   if (!hashedUniqueString) {
     res.status(400).send('Error: Something went wrong');
-    throw new Error('Something went wrong with hashing the unique string');
+    throw new Error('Something went wrong , please try again');
   }
 
   // create a new verification user
   AuthVerificationModel.findOneAndUpdate({
-    userId: _id, //AuthModel _id === AuthVerificationModel userId
+    userId: _id,
     uniqueString: hashedUniqueString,
     createdAt: Date.now(),
-    expiresAt: new Date(Date.now() + 21600000).getTime(), //6 hours 21600000 milliseconds
+    expiresAt: new Date(Date.now() + 300000).getTime(), //5 minutes 300000 milliseconds
   }).then((newVerification) => {
     if (!newVerification) {
       res.status(400);
-      throw new Error('Something went wrong on creating verification user');
+      throw new Error(
+        'Something went wrong on updating user data, please try again'
+      );
     }
   });
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      throw new Error('Something went wrong :( please try again');
+      throw new Error(
+        'Something went wrong on sending email :( please try again'
+      );
     } else {
       res.status(201).send('Email sent successfully!');
     }

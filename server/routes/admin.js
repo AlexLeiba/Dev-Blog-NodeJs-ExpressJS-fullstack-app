@@ -687,7 +687,8 @@ router.post('/forgot-password', async (req, res) => {
           layout: loginLayout,
           error: '',
           currentRoute: '/forgot-password',
-          message: 'Reset password email has been sent to your email account!',
+          message:
+            'Reset password email has been sent to your email account, the reset password link will expire in 5 minutes!',
         }); //when accesing this route we visit the 'admin' page from 'views' folder
 
         // REDIRECT TO DASHBOARD
@@ -729,7 +730,7 @@ router.get('/check-reset-password/:id/:uniqueString', async (req, res) => {
 
     if (!authenticatedUser) {
       throw new Error(
-        'The verification has expired or the link is invalid, please try again'
+        'The token has expired or the link is invalid, please try to reset password again'
       );
     }
 
@@ -745,13 +746,15 @@ router.get('/check-reset-password/:id/:uniqueString', async (req, res) => {
       // COMPARE THE TOKEN WITH THE HASHED TOKEN
       if (!compareUniqueStrings) {
         // res.redirect('/admin/verification-error');
-        throw new Error('The user id is invalid');
+        throw new Error(
+          'The token has expired or the link is invalid, please try to reset password again'
+        );
       }
 
       // CHECK IF THE TOKEN IS VALID
       if (Date.now() > expiresAt) {
         throw new Error(
-          'The  token has expired :(, Please try to reset password again in order to get a new token'
+          'The token has expired :(, Please try to reset password again in order to get a new token'
         );
       }
 
