@@ -1,3 +1,4 @@
+<% if (currentPage === 1) { %>
 <div class="author">
   <h1 class="author__heading">Hi there :)</h1>
 
@@ -5,13 +6,13 @@
     { I'm a front-end developer and this is my simple blog website.}
   </p>
 </div>
-
 <img
   style="filter: opacity(0.8)"
   src="/img/web-dev-bg.jpeg"
   alt="hero-image"
   class="hero-image"
 />
+<% } %>
 
 <section class="articles">
   <h2 class="articles__heading">Latest Articles</h2>
@@ -46,14 +47,22 @@
     <!-- PREV -->
 
     <% if(currentPage > 1 && prevPage !== null) { %>
-    <a href="/?page=<%= prevPage %>" class="pagination"> &lt; Previous page</a>
+    <a href="/?page=<%= prevPage %>" class="pagination">
+      <p>&#8592; Previous page</p>
+      <div class="underline"></div>
+    </a>
     <% }else{%>
     <div></div>
     <%} %>
 
     <!-- NEXT -->
     <% if(hasNextPage) { %>
-    <a href="/?page=<%= nextPage %>" class="pagination"> Next page &gt;</a>
+    <a href="/?page=<%= nextPage %>" class="pagination">
+      <p>Next page &#8594;</p>
+
+      <div class="underline"></div>
+    </a>
+
     <% }else{%>
     <div></div>
     <%} %>

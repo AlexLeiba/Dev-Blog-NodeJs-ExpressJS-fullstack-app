@@ -238,6 +238,7 @@ router.post('/register', async (req, res) => {
     const { username, password, email } = req.body;
 
     if (username && password && email) {
+      console.log('🚀 ~ router.post ~ username:', username);
       const findUser = await AuthModel.findOne({ email });
 
       if (findUser) {

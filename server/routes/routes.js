@@ -13,7 +13,7 @@ router.get('', async (req, res) => {
   const token = req.cookies.token;
 
   try {
-    let articlePerPage = 5;
+    let articlePerPage = 10;
     let currentPage = req.query.page || 1;
 
     const blogsData = await Post.find({

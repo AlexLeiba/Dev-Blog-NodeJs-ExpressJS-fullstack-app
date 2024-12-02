@@ -4,9 +4,6 @@ const AuthVerificationModel = require('../models.db/authVerificationModel');
 // email handler
 const nodemailer = require('nodemailer');
 
-// password handler
-const bcrypt = require('bcrypt');
-
 // nodemailer transporter
 
 const transporter = nodemailer.createTransport({
@@ -19,8 +16,7 @@ const transporter = nodemailer.createTransport({
 
 // SEND VERIFICATION EMAIL
 function forgotPassword({ email, username }, _id, hashedUniqueString, res) {
-  // const localBaseUrl = 'http://localhost:5001/';
-  const productionBaseUrl = 'https://full-stack-blog-37mi.onrender.com/';
+  const baseUrl = process.env.BASE_URL;
 
   // HTML
   const mailOptions = {
@@ -30,11 +26,7 @@ function forgotPassword({ email, username }, _id, hashedUniqueString, res) {
     text: `Hello ${email}, Reset your password by clicking the link below`,
     html: `<h4>Hello ${username}</h4> <h2>Welcome back to Dev-Blog :)</h2> <h3>Reset your password by clicking the link below</h3>  
       <a href="${
-        productionBaseUrl +
-        'admin/check-reset-password/' +
-        _id +
-        '/' +
-        hashedUniqueString
+        baseUrl + 'admin/check-reset-password/' + _id + '/' + hashedUniqueString
       }">Click here to verify your email</a>
        <h4>This link will expire in 6 hours</h4>`,
   };

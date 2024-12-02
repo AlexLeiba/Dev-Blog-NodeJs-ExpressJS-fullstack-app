@@ -22,8 +22,7 @@ const transporter = nodemailer.createTransport({
 
 // SEND VERIFICATION EMAIL
 function sendVerificationEmail({ email, username }, _id, res) {
-  // const localBaseUrl = 'http://localhost:5001/';
-  const productionBaseUrl = 'https://full-stack-blog-37mi.onrender.com/';
+  const baseUrl = process.env.BASE_URL;
   const uniqueString = uuidv4() + _id;
 
   // HTML
@@ -34,11 +33,7 @@ function sendVerificationEmail({ email, username }, _id, res) {
     text: `Hello ${email}, please verify your email by clicking the link below`,
     html: `<h4>Hello ${username}</h4> <h2>Welcome to Dev-Blog :)</h2> <h3>please verify your email by clicking the link below</h3>  
       <a href="${
-        productionBaseUrl +
-        'admin/email-verification/' +
-        _id +
-        '/' +
-        uniqueString
+        baseUrl + 'admin/email-verification/' + _id + '/' + uniqueString
       }">Click here to verify your email</a>
        <h4>This link will expire in 6 hours</h4>`,
   };
