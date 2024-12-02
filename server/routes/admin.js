@@ -538,7 +538,7 @@ router.post('/edit-article/:id', authMiddleware, async (req, res) => {
 // LOG OUT
 router.get('/logout', (req, res) => {
   res.clearCookie('token');
-  res.redirect('/');
+  res.redirect('/admin/login');
 });
 
 // // UPDATE ADMIN BLOG ROUTE
