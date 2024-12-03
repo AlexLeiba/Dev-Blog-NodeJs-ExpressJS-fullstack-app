@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
       req.user = decoded;
       next();
     } catch (err) {
-      res.status(401);
+      res.status(401).send(err.message);
       res.redirect('/admin/login');
     }
   } else {

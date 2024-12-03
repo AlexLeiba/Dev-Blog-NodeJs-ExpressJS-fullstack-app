@@ -27,7 +27,6 @@ router.get('', async (req, res) => {
       .exec();
 
     const count = await Post.find({ public: true }).countDocuments();
-    // console.log('🚀 ~ \n\n router.get ~ n:', count);
 
     const nextPage = parseInt(currentPage) + 1;
     const prevPage = parseInt(currentPage) - 1;
@@ -43,9 +42,20 @@ router.get('', async (req, res) => {
       currentPage: parseInt(currentPage),
       currentRoute: '/',
       token: token ? true : false,
+      error: '',
     }); //when accesing this route we visit the 'index' page from 'views' folder
   } catch (err) {
-    console.log(err);
+    res.render('index', {
+      locals,
+      blogsData: [],
+      nextPage: 0,
+      hasNextPage: false,
+      prevPage: 0,
+      currentPage: 1,
+      currentRoute: '/',
+      token: token ? true : false,
+      error: err.message,
+    }); //when accesing this route we visit the 'index' page from 'views' folder
     res.status(400).send('Error:', err);
   }
 });
@@ -66,9 +76,16 @@ router.get('/article/:id', async (req, res) => {
       post: selectedBlog,
       currentRoute: '/article',
       token: token ? true : false,
+      error: '',
     });
   } catch (err) {
-    console.log(err);
+    res.render('article', {
+      locals,
+      post: { author: '', body: '', title: '', titleUrl: '', urlLink: '' },
+      currentRoute: '/article',
+      token: token ? true : false,
+      error: err.message,
+    });
   }
 });
 // BLOG POST SEARCH TERM ROUTE, GET SEARCHED  POST
@@ -102,15 +119,21 @@ router.post('/search', async (req, res) => {
       data,
       currentRoute: '/search',
       token: token ? true : false,
+      error: '',
     });
   } catch (err) {
-    console.log(err);
+    res.render('search', {
+      locals,
+      data: [''],
+      currentRoute: '/search',
+      token: token ? true : false,
+      error: err.message,
+    });
   }
 });
 
 // UPDATE POST ROUTE
 router.post('/article/:id', async (req, res) => {
-  const token = req.cookies.token;
   const locals = {
     title: 'Blogs',
     description: 'Blogs',
@@ -138,7 +161,6 @@ router.post('/article/:id', async (req, res) => {
 
 // ADD POST ROUTE
 router.put('/article/', async (req, res) => {
-  const token = req.cookies.token;
   const locals = {
     title: 'Blogs',
     description: 'Blogs',

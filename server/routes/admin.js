@@ -99,13 +99,13 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
           currentRoute: '/email-verification',
           message:
             'Verification was successful, now you can log in into your account!',
+          err: '',
         }); //when accesing this route we visit the 'admin' page from 'views' folder
       } else {
         throw new Error('Something went wrong while updating the user data');
       }
     }
   } catch (err) {
-    console.log(err);
     res.render('admin/email-verification', {
       locals,
       layout: loginLayout,
@@ -134,7 +134,6 @@ router.get('/login', async (req, res) => {
       currentRoute: '/login',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
-    console.log(err);
     res.render('admin/login', {
       locals,
       layout: loginLayout,
@@ -166,6 +165,7 @@ router.post('/login', async (req, res) => {
               username: userDB.username,
               id: userDB._id,
             },
+
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
           );
@@ -191,7 +191,6 @@ router.post('/login', async (req, res) => {
       throw new Error('Please enter a valid email and password');
     }
   } catch (err) {
-    console.log(err);
     res.render('admin/login', {
       locals,
       layout: loginLayout,
@@ -203,11 +202,11 @@ router.post('/login', async (req, res) => {
 
 // REGISTER MAIN PAGE GET AND RENDER PAGE
 router.get('/register', async (req, res) => {
+  const locals = {
+    title: 'Admin',
+    description: 'Admin',
+  };
   try {
-    const locals = {
-      title: 'Admin',
-      description: 'Admin',
-    };
     res.render('admin/register', {
       locals,
       layout: registerLayout,
@@ -216,11 +215,10 @@ router.get('/register', async (req, res) => {
       message: '',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
-    console.log(err);
     res.render('admin/register', {
       locals,
       layout: registerLayout,
-      error: '',
+      error: err.message,
       currentRoute: '/register',
       message: '',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
@@ -238,7 +236,6 @@ router.post('/register', async (req, res) => {
     const { username, password, email } = req.body;
 
     if (username && password && email) {
-      console.log('🚀 ~ router.post ~ username:', username);
       const findUser = await AuthModel.findOne({ email });
 
       if (findUser) {
@@ -275,7 +272,6 @@ router.post('/register', async (req, res) => {
       throw new Error('All fields are required');
     }
   } catch (err) {
-    console.log(err);
     res.status(400);
     res.render('admin/register', {
       locals,
@@ -312,7 +308,6 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.render('admin/dashboard', {
       locals,
       layout: dashboardLayout,
@@ -344,13 +339,13 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 // BLOG ROUTE, GET SELECTED BLOG
 router.get('/article/:id', authMiddleware, async (req, res) => {
   const selectedBlog = await Post.findById(req.params.id);
+
   try {
     if (selectedBlog) {
       const locals = {
         title: selectedBlog.title,
         description: selectedBlog.description,
       };
-
       res.render('article', {
         locals,
         post: selectedBlog,
@@ -360,7 +355,11 @@ router.get('/article/:id', authMiddleware, async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    const locals = {
+      title: 'Error',
+      description: 'error message',
+    };
+
     res.render('article', {
       locals,
       post: selectedBlog ? selectedBlog : '',
@@ -373,12 +372,11 @@ router.get('/article/:id', authMiddleware, async (req, res) => {
 
 // ADD NEW BLOG - RENDER PAGE
 router.get('/add-new-article', authMiddleware, async (req, res) => {
+  const locals = {
+    title: 'Add new article',
+    description: 'Add new article',
+  };
   try {
-    const locals = {
-      title: 'Add new article',
-      description: 'Add new article',
-    };
-
     res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
@@ -386,7 +384,6 @@ router.get('/add-new-article', authMiddleware, async (req, res) => {
       currentRoute: '/add-new-article',
     });
   } catch (err) {
-    console.log(err);
     res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
@@ -418,7 +415,6 @@ router.post('/add-new-article', authMiddleware, async (req, res) => {
       res.redirect('/admin/dashboard');
     }
   } catch (err) {
-    console.log(err);
     res.render('admin/add-new-article', {
       locals,
       layout: dashboardLayout,
@@ -472,7 +468,6 @@ router.get('/edit-article/:id', authMiddleware, async (req, res) => {
       throw new Error('Unauthorized');
     }
   } catch (err) {
-    console.log(err);
     res.render('admin/edit-article', {
       locals,
       layout: dashboardLayout,
@@ -643,7 +638,6 @@ router.get('/forgot-password', async (req, res) => {
       message: '',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
-    console.log(err);
     res.render('admin/forgot-password', {
       locals,
       layout: loginLayout,
@@ -680,7 +674,7 @@ router.post('/forgot-password', async (req, res) => {
             'Something went wrong updating the user verification'
           );
 
-        forgotPassword(req.body, userDB._id, uniqueString, res);
+        forgotPassword(req.body, userDB, uniqueString, res);
 
         res.render('admin/forgot-password', {
           locals,
@@ -699,7 +693,6 @@ router.post('/forgot-password', async (req, res) => {
       throw new Error('Please enter a valid email and password');
     }
   } catch (err) {
-    console.log(err);
     res.render('admin/forgot-password', {
       locals,
       layout: loginLayout,
@@ -737,7 +730,6 @@ router.get('/check-reset-password/:id/:uniqueString', async (req, res) => {
     if (authenticatedUser) {
       const {
         expiresAt, //verify if link hasn't expired
-        userId: dbUserID,
         uniqueString: dbUniqueString,
       } = authenticatedUser;
 
@@ -769,7 +761,6 @@ router.get('/check-reset-password/:id/:uniqueString', async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.render(`admin/check-reset-password`, {
       locals,
       layout: loginLayout,
@@ -819,7 +810,6 @@ router.post('/check-reset-password/:id', async (req, res) => {
         'You resetted password successfully, now you can log in into your account!',
     }); //when accesing this route we visit the 'admin' page from 'views' folder
   } catch (err) {
-    console.log(err);
     res.render('admin/check-reset-password', {
       userId: id,
       locals,
