@@ -136,10 +136,6 @@ body {
   text-decoration: underline;
 }
 
-.header__logo {
-  font-weight: 700;
-}
-
 /* Search button from header */
 .searchBtn {
   padding: 0.5rem 1rem;
@@ -989,4 +985,21 @@ section ul li a {
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.admin-name {
+  font-size: var(--font-size-sm);
+}
+
+.blog-icon {
+  width: 36px;
+  /* height: 20px; */
+}
+
+.header__logo {
+  height: 36px;
 }

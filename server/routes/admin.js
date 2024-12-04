@@ -300,6 +300,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     if (blogsData) {
       res.render('admin/dashboard', {
+        admin: req.user,
         locals,
         layout: dashboardLayout,
         data: blogsData,
@@ -310,6 +311,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
   } catch (err) {
     res.render('admin/dashboard', {
       locals,
+      admin: { username: '', email: '' },
       layout: dashboardLayout,
       data: blogsData ? blogsData : [],
       error: err.message,

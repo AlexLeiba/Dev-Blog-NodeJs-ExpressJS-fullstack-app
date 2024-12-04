@@ -12,7 +12,9 @@
   alt="hero-image"
   class="hero-image"
 />
-<% } %>
+<% } %> <% if(error) { %>
+<p class="error-message"><%= error %></p>
+<% }%>
 
 <section class="articles">
   <h2 class="articles__heading">Latest Articles</h2>

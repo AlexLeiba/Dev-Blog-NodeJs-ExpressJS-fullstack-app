@@ -13,6 +13,10 @@
     </div>
   </div>
 
+  <% if(error) { %>
+  <p class="error-message"><%= error %></p>
+  <% }%>
+
   <div class="article-separator"></div>
 
   <p class="article-body"><%- post.body %></p>

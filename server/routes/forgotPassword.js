@@ -4,6 +4,8 @@ const AuthVerificationModel = require('../models.db/authVerificationModel');
 // email handler
 const nodemailer = require('nodemailer');
 
+const resetPasswordEmailHtmlTemplate = require('./resetPasswordEmailHtmlTemplate');
+
 // nodemailer transporter
 
 const transporter = nodemailer.createTransport({
@@ -17,6 +19,12 @@ const transporter = nodemailer.createTransport({
 // SEND VERIFICATION EMAIL
 function forgotPassword({ email }, userDB, hashedUniqueString, res) {
   const baseUrl = process.env.BASE_URL;
+  const resetPasswordUrl =
+    baseUrl +
+    'admin/check-reset-password/' +
+    userDB._id +
+    '/' +
+    hashedUniqueString;
 
   // HTML
   const mailOptions = {
@@ -24,17 +32,11 @@ function forgotPassword({ email }, userDB, hashedUniqueString, res) {
     to: email,
     subject: 'Reset password',
     text: `Hello ${userDB.username}, Reset your password by clicking the link below`,
-    html: `<h4>Hello ${
-      userDB.username
-    }</h4> <h2>Welcome back to Dev-Blog 🤗</h2> <h3>Reset your password by clicking the link below</h3>  
-      <a href="${
-        baseUrl +
-        'admin/check-reset-password/' +
-        userDB._id +
-        '/' +
-        hashedUniqueString
-      }">Click here to reset your password</a>
-       <h4>This link will expire in 5 minutes</h4>`,
+    html: resetPasswordEmailHtmlTemplate({
+      username: userDB.username,
+      resetPasswordUrl,
+      baseUrl,
+    }),
   };
 
   // hash the unique string

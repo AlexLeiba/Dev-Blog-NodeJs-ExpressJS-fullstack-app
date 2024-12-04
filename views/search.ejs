@@ -3,7 +3,9 @@
 
   <% if (data?.length === 0) { %>
   <p class="no-search-results-found">No results found</p>
-  <% } %>
+  <% } %> <% if(error) { %>
+  <p class="error-message"><%= error %></p>
+  <% }%>
 </div>
 
 <section class="articles">

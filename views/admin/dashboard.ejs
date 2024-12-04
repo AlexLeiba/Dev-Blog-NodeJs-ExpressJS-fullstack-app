@@ -1,10 +1,15 @@
 <div class="dashboard-title">
   <div>
-    <h2>Public and Private articles</h2>
+    <p class="admin-name">
+      Admin username: <strong><%=admin.username %></strong>
+    </p>
+    <p class="admin-name">Admin email: <strong><%=admin.email %></strong></p>
+    <h2>Articles</h2>
   </div>
 
   <a href="/admin/add-new-article" class="addPostButton">+ Add New</a>
 </div>
+
 <% if(error) { %>
 <p class="error-message"><%= error %></p>
 <% }%>
