@@ -36,11 +36,6 @@ function sendVerificationEmail({ email, username }, _id, res) {
     to: email,
     subject: 'Verify your email',
     text: `Hello ${email}, please verify your email by clicking the link below`,
-    // html: `<h4>Hello ${username}</h4> <h2>Welcome to Dev-Blog 🤗</h2> <h3>please verify your email by clicking the link below</h3>
-    //   <a href="${
-    //     baseUrl + 'admin/email-verification/' + _id + '/' + uniqueString
-    //   }">Click here to verify your email</a>
-    //    <h4>This link will expire in 6 hours</h4>`,
 
     html: verificationEmailHtmlTemplate({ username, verificationUrl, baseUrl }),
   };

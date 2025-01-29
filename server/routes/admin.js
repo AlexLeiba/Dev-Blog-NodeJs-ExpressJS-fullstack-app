@@ -28,7 +28,7 @@ const sendVerificationEmail = require('./verificationEmail');
 const forgotPassword = require('./forgotPassword');
 
 // VERIFICATION EMAIL AND RENDER PAGE
-// user will click on this link to verify his email, will redirect him to this address, then we will check if the unique string matches with the one the user send on register
+// user will click on this link in verification email,the link will redirect him to this address, then we will check if the unique string matches with the one the user send on register
 router.get('/email-verification/:id/:uniqueString', async (req, res) => {
   const locals = {
     title: 'Verify email',
@@ -46,6 +46,9 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
     if (!authenticatedUser) {
       throw new Error('The user id is invalid, please try again');
     }
+    if (authenticatedUser.verified) {
+      throw new Error('You have already verified your email.');
+    }
 
     if (authenticatedUser) {
       const { expiresAt, userId: dbUserID } = authenticatedUser;
@@ -59,9 +62,9 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
         throw new Error('The user id is invalid, please try again');
       }
 
-      // CHECK IF THE TOKEN IS VALID
+      // CHECK IF THE TOKEN IS VALID/ TOKEN HAS EXPIRED
       if (Date.now() > expiresAt) {
-        // DELETE THE USER AUTH AND CLEAR THE USER PROFILE
+        // DELETE THE USER AUTH AND CLEAR THE USER PROFILE WHEN TOKEN EXPIRED, SO USER CAN REGISTER AGAIN TO GET A NEW TOKEN
         const deleteAuthUserModel = await AuthModel.findByIdAndDelete(dbUserID); // clear the user profile, in order to be able to register again
         const deleteAuthVerificationModel =
           await AuthVerificationModel.findOneAndDelete({
@@ -75,7 +78,7 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
 
         if (deleteAuthUserModel && deleteAuthVerificationModel) {
           throw new Error(
-            'The verification token has expired :( Please try to register again in order to get a new token'
+            'The verification token has expired :( In order to get a new verification email Please try to register again'
           );
         }
       }
@@ -116,8 +119,6 @@ router.get('/email-verification/:id/:uniqueString', async (req, res) => {
     //when accesing this route we visit the 'admin' page from 'views' folder
   }
 });
-
-////
 
 // LOGIN AUTH MAIN PAGE GET AND RENDER PAGE
 router.get('/login', async (req, res) => {
@@ -284,7 +285,6 @@ router.post('/register', async (req, res) => {
 });
 
 // DASHBOARD ROUTE
-//protected page
 router.get('/dashboard', authMiddleware, async (req, res) => {
   const locals = {
     title: 'Admin Dashboard',
@@ -319,24 +319,6 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
     });
   }
 });
-// router.get('/article/:id', authMiddleware, async (req, res) => {
-//   try {
-//     const blogData = await Post.findById(req.params.id);
-
-//     const locals = {
-//       title: blogData.title,
-//       description: blogData.description,
-//     };
-
-//     res.render('admin/article', {
-//       locals,
-//       layout: dashboardLayout,
-//       data: blogData,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
 
 // BLOG ROUTE, GET SELECTED BLOG
 router.get('/article/:id', authMiddleware, async (req, res) => {
@@ -538,79 +520,6 @@ router.get('/logout', (req, res) => {
   res.clearCookie('token');
   res.redirect('/admin/login');
 });
-
-// // UPDATE ADMIN BLOG ROUTE
-// router.post('/admin/article/:id', async (req, res) => {
-//   const locals = {
-//     title: 'Blogs',
-//     description: 'Blogs',
-//   };
-
-//   try {
-//     const blogsData = await Post.find(req.params.id);
-//     if (blogsData) {
-//       await Post.findByIdAndUpdate(req.params.id, {
-//         title: req.body.title,
-//         body: req.body.body,
-//         author: req.body.author,
-//       });
-//       res.status(201).send('Post updated successfully');
-//     } else {
-//       res.status(404).send('Post not found');
-//     }
-//   } catch (error) {
-//     res.status(400).send('Error:', error);
-//   }
-
-//   res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
-// });
-
-// // ADD ADMIN BLOG ROUTE
-// router.put('/admin/article', async (req, res) => {
-//   const locals = {
-//     title: 'Blogs',
-//     description: 'Blogs',
-//   };
-
-//   try {
-//     const postedBlog = await Post.insertOne({
-//       title: req.body.title,
-//       body: req.body.body,
-//       author: req.body.author,
-//     });
-
-//     if (postedBlog) {
-//       res.status(201).send('Post added successfully');
-//     } else {
-//       res.status(400).send('Post not added');
-//     }
-//   } catch (error) {
-//     res.status(400).send('Error:', error);
-//   }
-
-//   res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
-// });
-
-// // DELETE BLOG ROUTE
-// router.get('/admin/article/:id', (req, res) => {
-//   const locals = {
-//     title: 'Blogs',
-//     description: 'Blogs',
-//   };
-
-//   try {
-//     const deletedBlog = Post.findByIdAndDelete(req.params.id);
-//     if (deletedBlog) {
-//       res.status(200).send('Post deleted successfully');
-//     } else {
-//       res.status(404).send('Post not found');
-//     }
-//   } catch (error) {
-//     res.status(400).send('Error:', error);
-//   }
-
-//   res.render('index', locals); //when accesing this route we visit the 'index' page from 'views' folder
-// });
 
 // ABOUT ROUTE
 router.get('/about', (req, res) => {

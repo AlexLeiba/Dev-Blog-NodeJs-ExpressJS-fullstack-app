@@ -459,15 +459,6 @@ input[type='search'] {
   transition: border-bottom 0.3s ease-in-out;
   animation: line-move 0.5s ease-in-out;
 }
-/* .pagination:hover {
-  color: var(--gray);
-  font-size: var(--font-size-md);
-  margin-bottom: 1rem;
-  text-decoration: none;
-  border-bottom: var(--white) 1px solid;
-  transition: border-bottom 0.3s ease-in-out;
-  animation: line-move 0.5s ease-in-out;
-} */
 
 .pagination-container .underline {
   width: 0%;
@@ -481,7 +472,7 @@ input[type='search'] {
   width: 100%;
 }
 
-/* ADMIN APP///////////////////////////////////////////////
+/* ADMIN APP/
 
 /* DASHBOARD */
 .btn-delete {
